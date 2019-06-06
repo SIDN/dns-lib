@@ -19,11 +19,13 @@
  */
 package nl.sidnlabs.dnslib.types;
 
+import java.io.Serializable;
 import lombok.Value;
 
 @Value
-public class TypeMap {
+public class TypeMap implements Serializable {
 
+  private static final long serialVersionUID = 5888393216493652575L;
   private ResourceRecordType type;
   private char value;
 

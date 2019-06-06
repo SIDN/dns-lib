@@ -69,16 +69,16 @@ public class DNSKEYResourceRecord extends AbstractResourceRecord {
 
     protocol = buffer.readUnsignedByte();
 
-    short algorithm = buffer.readUnsignedByte();
-    this.algorithm = AlgorithmType.fromValue(algorithm);
+    short alg = buffer.readUnsignedByte();
+    this.algorithm = AlgorithmType.fromValue(alg);
 
     char keysize = (char) (rdLength - 4); // 4 is length flags+proto+alg
     keydata = new byte[keysize];
     buffer.readBytes(keydata);
 
-    publicKey = KeyUtil.createPublicKey(keydata, algorithm);
+    publicKey = KeyUtil.createPublicKey(keydata, alg);
 
-    keytag = KeyUtil.createKeyTag(rdata, algorithm);
+    keytag = KeyUtil.createKeyTag(rdata, alg);
 
     isZoneKey = KeyUtil.isZoneKey(this);
 
@@ -94,12 +94,7 @@ public class DNSKEYResourceRecord extends AbstractResourceRecord {
     // The Flag field MUST be represented as an unsigned decimal integer.
     // Given the currently defined flags, the possible values are: 0, 256,
     // and 257.
-    if (flags != 0 && flags != 256 && flags != 257) {
-      return false;
-    }
-
-    return true;
-
+    return (flags == 0 || flags == 256 || flags == 257);
   }
 
   @Override
@@ -127,9 +122,14 @@ public class DNSKEYResourceRecord extends AbstractResourceRecord {
   @Override
   public JsonObject toJSon() {
     JsonObjectBuilder builder = super.createJsonBuilder();
-    return builder.add("rdata", Json.createObjectBuilder().add("flags", (int) flags))
-        .add("protocol", protocol).add("algorithm", algorithm.name()).add("zone-key", isZoneKey)
-        .add("sep-key", isSepKey).add("keytag", keytag).build();
+    return builder
+        .add("rdata", Json.createObjectBuilder().add("flags", (int) flags))
+        .add("protocol", protocol)
+        .add("algorithm", algorithm.name())
+        .add("zone-key", isZoneKey)
+        .add("sep-key", isSepKey)
+        .add("keytag", keytag)
+        .build();
   }
 
 }

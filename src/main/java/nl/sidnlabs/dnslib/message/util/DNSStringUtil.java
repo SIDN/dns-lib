@@ -22,8 +22,8 @@ package nl.sidnlabs.dnslib.message.util;
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import org.apache.commons.lang3.StringUtils;
-import com.google.common.base.Charsets;
 import nl.sidnlabs.dnslib.exception.DnsDecodeException;
 import nl.sidnlabs.dnslib.exception.DnsEncodeException;
 
@@ -45,6 +45,8 @@ import nl.sidnlabs.dnslib.exception.DnsEncodeException;
  * 
  */
 public class DNSStringUtil {
+
+  private DNSStringUtil() {}
 
   // max length of a rfc1035 character-string (excluding length byte)
   private static final int MAX_CHARACTER_STRING_LENGTH = 255;
@@ -123,7 +125,7 @@ public class DNSStringUtil {
 
         byte[] bytes = new byte[length];
         buffer.readBytes(bytes);
-        String label = new String(bytes, Charsets.US_ASCII);
+        String label = new String(bytes, StandardCharsets.US_ASCII);
 
         nameBuilder.append(label);
         nameBuilder.append(".");
@@ -249,7 +251,7 @@ public class DNSStringUtil {
     if (length > 0) {
       byte[] characterString = new byte[length];
       buffer.readBytes(characterString);
-      return new String(characterString, Charsets.US_ASCII);
+      return new String(characterString, StandardCharsets.US_ASCII);
     }
 
     return "";

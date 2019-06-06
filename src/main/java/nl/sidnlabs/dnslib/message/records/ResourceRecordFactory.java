@@ -45,7 +45,7 @@ public class ResourceRecordFactory {
 
   private static ResourceRecordFactory instance = new ResourceRecordFactory();
 
-  private ResourceRecordFactory() {};
+  private ResourceRecordFactory() {}
 
   public static ResourceRecordFactory getInstance() {
     return instance;

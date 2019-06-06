@@ -47,7 +47,7 @@ public enum OpcodeType {
     OpcodeType[] values = values();
     for (OpcodeType type : values) {
       types.put(type.name(), type);
-      typesToInt.put(new Integer(type.getValue()), type);
+      typesToInt.put(Integer.valueOf(type.getValue()), type);
     }
   }
 

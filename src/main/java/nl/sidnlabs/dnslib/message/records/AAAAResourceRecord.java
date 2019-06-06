@@ -27,6 +27,7 @@ import javax.json.JsonObjectBuilder;
 import com.google.common.net.InetAddresses;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import nl.sidnlabs.dnslib.exception.DnsDecodeException;
 import nl.sidnlabs.dnslib.message.util.NetworkData;
 
 @Data
@@ -57,7 +58,7 @@ public class AAAAResourceRecord extends AbstractResourceRecord {
       try {
         ipv6Addres = InetAddress.getByAddress(ipv6Bytes);
       } catch (UnknownHostException e) {
-        throw new RuntimeException("Illegal ipv6 address", e);
+        throw new DnsDecodeException("Illegal ipv6 address", e);
       }
 
       setAddress(InetAddresses.toAddrString(ipv6Addres));

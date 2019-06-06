@@ -42,7 +42,7 @@ public class RRSIGResourceRecord extends AbstractResourceRecord {
 
   private static final long serialVersionUID = 1L;
 
-  private static final SimpleDateFormat DATE_FMT = new SimpleDateFormat("YYYYMMddHHmmss");
+  private final SimpleDateFormat DATE_FMT = new SimpleDateFormat("YYYYMMddHHmmss");
 
 
   /*
@@ -183,11 +183,17 @@ public class RRSIGResourceRecord extends AbstractResourceRecord {
     JsonObjectBuilder builder = super.createJsonBuilder();
     return builder
         .add("rdata",
-            Json.createObjectBuilder().add("type-covered", typeCovered.name())
-                .add("algorithm", algorithm.name()).add("labels", labels)
-                .add("original-ttl", originalTtl).add("sig-exp", DATE_FMT.format(exp))
-                .add("sig-inc", DATE_FMT.format(incep)).add("keytag", (int) keytag)
-                .add("signer-name", signerName).add("signature",
+            Json
+                .createObjectBuilder()
+                .add("type-covered", typeCovered.name())
+                .add("algorithm", algorithm.name())
+                .add("labels", labels)
+                .add("original-ttl", originalTtl)
+                .add("sig-exp", DATE_FMT.format(exp))
+                .add("sig-inc", DATE_FMT.format(incep))
+                .add("keytag", (int) keytag)
+                .add("signer-name", signerName)
+                .add("signature",
                     new Base64(Integer.MAX_VALUE, "".getBytes()).encodeAsString(signature)))
         .build();
   }

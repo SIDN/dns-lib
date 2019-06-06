@@ -47,51 +47,46 @@ public class NSECTypeDecoder {
           octetsRead++;
 
           int flag = 0;
-          if (flags == 0x0) {
-            flag = 0;
-          } else {
-            if ((flags & 0x0080) == 0x0080) { // 0000 0000 1000 0000
-              // 1st bit is set
-              flag = (i * 8) + 0;
-              createRRtype(flag, blockCount, types);
-            }
-            if ((flags & 0x0040) == 0x0040) { // 0000 0000 0100 0000
-              // 2nd bit is set
-              flag = (i * 8) + 1;
-              createRRtype(flag, blockCount, types);
-            }
-            if ((flags & 0x0020) == 0x0020) { // 0000 0000 0010 0000
-              // 3rd bit is set
-              flag = (i * 8) + 2;
-              createRRtype(flag, blockCount, types);
-            }
-            if ((flags & 0x0010) == 0x0010) { // 0000 0000 0001 0000
-              // 4th bit is set
-              flag = (i * 8) + 3;
-              createRRtype(flag, blockCount, types);
-            }
-            if ((flags & 0x0008) == 0x0008) { // 0000 0000 0000 1000
-              // 5th bit is set
-              flag = (i * 8) + 4;
-              createRRtype(flag, blockCount, types);
-            }
-            if ((flags & 0x0004) == 0x0004) { // 0000 0000 0000 0100
-              // 6th bit is set
-              flag = (i * 8) + 5;
-              createRRtype(flag, blockCount, types);
-            }
-            if ((flags & 0x0002) == 0x0002) { // 0000 0000 0000 0010
-              // 7th bit is set
-              flag = (i * 8) + 6;
-              createRRtype(flag, blockCount, types);
-            }
-            if ((flags & 0x0001) == 0x0001) { // 0000 0000 0000 0001
-              // 8th bit is set
-              flag = (i * 8) + 7;
-              createRRtype(flag, blockCount, types);
-            }
+          if ((flags & 0x0080) == 0x0080) { // 0000 0000 1000 0000
+            // 1st bit is set
+            flag = (i * 8) + 0;
+            createRRtype(flag, blockCount, types);
           }
-
+          if ((flags & 0x0040) == 0x0040) { // 0000 0000 0100 0000
+            // 2nd bit is set
+            flag = (i * 8) + 1;
+            createRRtype(flag, blockCount, types);
+          }
+          if ((flags & 0x0020) == 0x0020) { // 0000 0000 0010 0000
+            // 3rd bit is set
+            flag = (i * 8) + 2;
+            createRRtype(flag, blockCount, types);
+          }
+          if ((flags & 0x0010) == 0x0010) { // 0000 0000 0001 0000
+            // 4th bit is set
+            flag = (i * 8) + 3;
+            createRRtype(flag, blockCount, types);
+          }
+          if ((flags & 0x0008) == 0x0008) { // 0000 0000 0000 1000
+            // 5th bit is set
+            flag = (i * 8) + 4;
+            createRRtype(flag, blockCount, types);
+          }
+          if ((flags & 0x0004) == 0x0004) { // 0000 0000 0000 0100
+            // 6th bit is set
+            flag = (i * 8) + 5;
+            createRRtype(flag, blockCount, types);
+          }
+          if ((flags & 0x0002) == 0x0002) { // 0000 0000 0000 0010
+            // 7th bit is set
+            flag = (i * 8) + 6;
+            createRRtype(flag, blockCount, types);
+          }
+          if ((flags & 0x0001) == 0x0001) { // 0000 0000 0000 0001
+            // 8th bit is set
+            flag = (i * 8) + 7;
+            createRRtype(flag, blockCount, types);
+          }
         }
       }
     }

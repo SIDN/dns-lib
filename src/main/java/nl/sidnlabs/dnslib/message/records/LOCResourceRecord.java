@@ -67,8 +67,8 @@ public class LOCResourceRecord extends AbstractResourceRecord {
 
   private short version;
   private short size;
-  private short size_base;
-  private short size_power;
+  private short sizeBase;
+  private short sizePower;
   private short horizontalPrecision;
   private short verticalPrecision;
   private long latitude;
@@ -87,10 +87,10 @@ public class LOCResourceRecord extends AbstractResourceRecord {
 
     size = buffer.readUnsignedByte();
     // get the first 4 bits, which represent the base.
-    size_base = (short) ((size & 0x00f0) >>> 4);
+    sizeBase = (short) ((size & 0x00f0) >>> 4);
 
     // get the last 4 bits, which represent the pwer
-    size_power = (short) (size & 0x000f);
+    sizePower = (short) (size & 0x000f);
 
     horizontalPrecision = buffer.readUnsignedByte();
 
@@ -168,10 +168,17 @@ public class LOCResourceRecord extends AbstractResourceRecord {
   @Override
   public JsonObject toJSon() {
     JsonObjectBuilder builder = super.createJsonBuilder();
-    return builder.add("rdata",
-        Json.createObjectBuilder().add("version", (int) version).add("size", (int) size)
-            .add("hor_pre", (int) horizontalPrecision).add("vert_pre", (int) verticalPrecision)
-            .add("lat", latitude).add("long", longitude).add("alt", altitude))
+    return builder
+        .add("rdata",
+            Json
+                .createObjectBuilder()
+                .add("version", (int) version)
+                .add("size", (int) size)
+                .add("hor_pre", (int) horizontalPrecision)
+                .add("vert_pre", (int) verticalPrecision)
+                .add("lat", latitude)
+                .add("long", longitude)
+                .add("alt", altitude))
         .build();
   }
 
@@ -184,9 +191,9 @@ public class LOCResourceRecord extends AbstractResourceRecord {
     if (temp < 0) {
       temp = -temp;
       direction = neg;
-    } else
+    } else {
       direction = pos;
-
+    }
     sb.append(temp / (3600 * 1000)); /* degrees */
     temp = temp % (3600 * 1000);
     sb.append(" ");

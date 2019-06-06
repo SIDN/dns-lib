@@ -36,7 +36,7 @@ public class Question {
   private ResourceRecordClass qClass;
   private int qClassValue;
 
-  public Question() {};
+  public Question() {}
 
   public Question(String qName, ResourceRecordType qType, ResourceRecordClass qClass) {
     this.qName = qName;
@@ -59,9 +59,12 @@ public class Question {
   }
 
   public JsonObject toJSon() {
-    return Json.createObjectBuilder().add("qName", qName)
+    return Json
+        .createObjectBuilder()
+        .add("qName", qName)
         .add("qType", qType != null ? qType.name() : "")
-        .add("qClass", qClass != null ? qClass.name() : "").build();
+        .add("qClass", qClass != null ? qClass.name() : "")
+        .build();
   }
 
 }

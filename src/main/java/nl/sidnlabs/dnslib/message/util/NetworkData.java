@@ -34,11 +34,6 @@ public class NetworkData {
   private int index = 0;
   private int markedIndex = 0;
 
-  private int byte1 = 0;
-  private int byte2 = 0;
-  private int byte3 = 0;
-  private int byte4 = 0;
-
   // write part
   private ByteArrayOutputStream backing;
   private DataOutput writeBuffer;
@@ -72,10 +67,10 @@ public class NetworkData {
 
   public long readUnsignedInt() {
 
-    byte1 = (0xFF & buf[index]);
-    byte2 = (0xFF & buf[index + 1]);
-    byte3 = (0xFF & buf[index + 2]);
-    byte4 = (0xFF & buf[index + 3]);
+    int byte1 = (0xFF & buf[index]);
+    int byte2 = (0xFF & buf[index + 1]);
+    int byte3 = (0xFF & buf[index + 2]);
+    int byte4 = (0xFF & buf[index + 3]);
     index = index + 4;
 
     return ((long) (byte1 << 24 | byte2 << 16 | byte3 << 8 | byte4)) & 0xFFFFFFFFL;
@@ -83,15 +78,15 @@ public class NetworkData {
 
 
   public short readUnsignedByte() {
-    byte1 = (0xFF & buf[index]);
+    int byte1 = (0xFF & buf[index]);
     index++;
     return (short) byte1;
   }
 
 
   public char readUnsignedChar() {
-    byte1 = (0xFF & buf[index]);
-    byte2 = (0xFF & buf[index + 1]);
+    int byte1 = (0xFF & buf[index]);
+    int byte2 = (0xFF & buf[index + 1]);
     index = index + 2;
     return (char) (byte1 << 8 | byte2);
   }
@@ -128,7 +123,7 @@ public class NetworkData {
       writeBuffer.writeChar(c);
       writerIndex += 2;
     } catch (IOException e) {
-      throw new DnsEncodeException("Error while writing data", e);
+      throw new DnsEncodeException("Error while writing char", e);
     }
   }
 
@@ -137,7 +132,7 @@ public class NetworkData {
       writeBuffer.write(b);
       writerIndex++;
     } catch (IOException e) {
-      throw new DnsEncodeException("Error while writing data", e);
+      throw new DnsEncodeException("Error while writing byte", e);
     }
   }
 
@@ -146,7 +141,7 @@ public class NetworkData {
       writeBuffer.write(b);
       writerIndex = writerIndex + b.length;
     } catch (IOException e) {
-      throw new DnsEncodeException("Error while writing data", e);
+      throw new DnsEncodeException("Error while writing byte[]", e);
     }
   }
 
@@ -155,7 +150,7 @@ public class NetworkData {
       writeBuffer.writeInt((int) i);
       writerIndex += 4;
     } catch (IOException e) {
-      throw new DnsEncodeException("Error while writing data", e);
+      throw new DnsEncodeException("Error while writing int", e);
     }
   }
 

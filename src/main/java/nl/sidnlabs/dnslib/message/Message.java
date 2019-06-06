@@ -50,7 +50,7 @@ public class Message {
 
   private OPTResourceRecord pseudo;
 
-  public Message() {};
+  public Message() {}
 
   public Message(NetworkData data, boolean allowFail) {
 
@@ -63,11 +63,11 @@ public class Message {
       }
       // if allowFail then ignore exceptions.
     }
-  };
+  }
 
   public Message(NetworkData data) {
     this(data, false);
-  };
+  }
 
   public Header getHeader() {
     return header;
