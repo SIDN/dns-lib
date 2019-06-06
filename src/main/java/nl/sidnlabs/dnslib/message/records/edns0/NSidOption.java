@@ -24,9 +24,8 @@ import lombok.EqualsAndHashCode;
 import nl.sidnlabs.dnslib.message.util.NetworkData;
 
 /**
- * @see http://tools.ietf.org/html/rfc5001
+ * @see <a href="http://tools.ietf.org/html/rfc5001">rfc5001</a>
  * 
- *
  */
 @Data
 @EqualsAndHashCode(callSuper = true)

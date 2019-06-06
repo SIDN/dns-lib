@@ -25,8 +25,8 @@ import nl.sidnlabs.dnslib.message.util.NetworkData;
 
 
 /**
- * @see http://tools.ietf.org/html/draft-hubert-ulevitch-edns-ping-01
- * 
+ * @see <a href=
+ *      "https://tools.ietf.org/html/draft-hubert-ulevitch-edns-ping-01">draft-hubert-ulevitch-edns-ping-01</a>
  *
  */
 @Data

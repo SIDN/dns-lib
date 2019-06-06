@@ -26,8 +26,7 @@ import lombok.EqualsAndHashCode;
 import nl.sidnlabs.dnslib.message.util.NetworkData;
 
 /**
- * @see https://tools.ietf.org/html/rfc8145#section-4.1
- * 
+ * @see <a href="https://tools.ietf.org/html/rfc8145#section-4.1">rfc8145</a>
  *
  */
 @Data

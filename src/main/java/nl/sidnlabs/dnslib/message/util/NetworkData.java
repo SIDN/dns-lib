@@ -114,6 +114,7 @@ public class NetworkData {
    * 
    * @param len the size of return byte[]
    * @param max the max number of bytes read from buffer
+   * @return fixed sized array
    */
   public byte[] readBytes(int len, int max) {
     byte[] destination = new byte[len];
@@ -201,6 +202,8 @@ public class NetworkData {
 
   /**
    * Get the raw network order bytes
+   * 
+   * @return backing byte array of this buffer
    */
   public byte[] getBytes() {
     return buf;

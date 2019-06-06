@@ -72,14 +72,15 @@ public class KeyUtil {
    * publieke sleutel te herkennen is, dit is niet per definitie uniek per publieke sleutel. Zie
    * IETF RFC 4034, Appendix B voor meer informatie.
    * 
-   * @see http://www.ietf.org/rfc/rfc4034.txt
+   * @see <a href="http://www.ietf.org/rfc/rfc4034.txt">rfc4034</a>
    * 
    *      Dit lijkt op het berekenen van 1 complement checksum
    *      (http://nl.wikipedia.org/wiki/One%27s_complement) De onderstaande implementatie is
-   *      overgenomen van versisign, zie:
-   *      http://svn.verisignlabs.com/jdnssec/dnsjava/trunk/org/xbill/DNS/KEYBase.java
-   * @param key een base64 encoded public key
-   * @param algorimte, de naam van het algoritme waarmee de public key is gemaakt.
+   *      overgenomen van versisign, zie: <a href=
+   *      "http://svn.verisignlabs.com/jdnssec/dnsjava/trunk/org/xbill/DNS/KEYBase.java">jdnssec
+   *      </a>
+   * @param rdata key
+   * @param alg de naam van het algoritme waarmee de public key is gemaakt.
    * @return integer waarde welke de keytag van de public key is
    */
   public static int createKeyTag(byte[] rdata, int alg) {
