@@ -1,4 +1,6 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>nl.sidnlabs</groupId>
@@ -29,12 +31,12 @@
 		<connection>scm:git:git://github.com/SIDN/dnslib.git</connection>
 		<developerConnection>scm:git:ssh://github.com/SIDN/dnslib.git</developerConnection>
 		<url>https://github.com/SIDN/dnslib/tree/master/</url>
-	  <tag>dnslib-0.1.4</tag>
-  </scm>
+	</scm>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+		<project.scm.id>github-server</project.scm.id>
 		<java.version>1.8</java.version>
 	</properties>
 
@@ -96,7 +98,8 @@
 		</dependency>
 	</dependencies>
 
-	<!-- for build and publish info see: https://central.sonatype.org/pages/apache-maven.html -->
+	<!-- for build and publish info see: https://central.sonatype.org/pages/apache-maven.html 
+		To release do the following: 1) mvn release:clean release:prepare 2) mvn release:perform-->
 	<distributionManagement>
 		<snapshotRepository>
 			<id>ossrh</id>
