@@ -67,7 +67,7 @@ public class DNSStringUtilTest {
         110, 105, 111, 114, 112, 108, 97, 110, 101, 116, 2, 102, 114, 0, -64, 16, 0, 2, 0, 1, 0, 1,
         81, -128, 0, 7, 4, 110, 115, 115, 112, -64, 57, 0, 0, 41, 16, 0, 0, 0, 0, 0, 0, 0};
     NetworkData networkData = new NetworkData(bytes);
-    Message dnsMessage = new Message(networkData, false);
+    Message dnsMessage = new Message(networkData);
     assertEquals(1, dnsMessage.getAuthority().size());
     RRset rrSet = dnsMessage.getAuthority().get(0);
     assertEquals(2, rrSet.getAll().size());
@@ -92,7 +92,7 @@ public class DNSStringUtilTest {
 
     assertNotNull(networkData);
 
-    Message dnsMessage = new Message(networkData, false);
+    Message dnsMessage = new Message(networkData);
 
     assertNotNull(dnsMessage);
 
@@ -136,7 +136,7 @@ public class DNSStringUtilTest {
 
     assertNotNull(networkData);
 
-    Message dnsMessage = new Message(networkData, false);
+    Message dnsMessage = new Message(networkData);
 
     assertNotNull(dnsMessage);
 

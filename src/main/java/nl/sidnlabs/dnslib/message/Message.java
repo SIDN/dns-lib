@@ -52,21 +52,9 @@ public class Message {
 
   public Message() {}
 
-  public Message(NetworkData data, boolean allowFail) {
-
-    try {
-      decode(data);
-    } catch (Exception e) {
-      if (!allowFail) {
-        // rethrow exception
-        throw e;
-      }
-      // if allowFail then ignore exceptions.
-    }
-  }
-
   public Message(NetworkData data) {
-    this(data, false);
+    bytes = data.length();
+    decode(data);
   }
 
   public Header getHeader() {
