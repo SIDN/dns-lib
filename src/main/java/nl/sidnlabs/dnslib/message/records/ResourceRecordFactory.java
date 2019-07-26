@@ -96,6 +96,8 @@ public class ResourceRecordFactory {
         return new NSEC3ParamResourceRecord();
       case 99:
         return new SPFResourceRecord();
+      case 250:
+        return new TSIGResourceRecord();
       case 255:
         return new AnyResourceRecord();
       case 256:

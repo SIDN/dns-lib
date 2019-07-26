@@ -49,7 +49,9 @@ public class DNSStringUtil {
   private DNSStringUtil() {}
 
   // max length of a rfc1035 character-string (excluding length byte)
-  private static final int MAX_CHARACTER_STRING_LENGTH = 255;
+  private static final int MAX_CHARACTER_STRING_LENGTH = 253;
+  private static final int MAX_LABEL_LENGTH = 63;
+  private static final int MAX_LABELS = 127;
 
   private static final int MAX_POINTER_CHAIN_LENGTH = 10; // TODO: what is the optimal value?
   /*
@@ -111,17 +113,30 @@ public class DNSStringUtil {
       return ".";
     }
 
+    // keep track of the total length of the name
+    // prevent creating huge name and and getting OOM exception
+    int totalLength = 0;
+    int totalLabels = 0;
     // keep reading labels until zero length (end of string) is reached
     while (length > 0) {
 
-      if (length > 5000) {
-        // large value chosen to allow decoding illegal long labels (>63)
-        // but have some protection against running out of memmory for
-        // huge erroneous huge label sizes.
-        throw new DnsDecodeException("Unsupported label length found, value: " + (int) length);
+      if (totalLabels == MAX_LABELS) {
+        // too many labels used, stop now to prevent possible infinite loop
+        throw new DnsEncodeException(
+            "Too many labels (max 127) for name: " + nameBuilder.toString());
+      }
+
+      if (totalLength > MAX_CHARACTER_STRING_LENGTH) {
+        // protection against OOM
+        throw new DnsEncodeException(
+            "total name length length exceeding max (253) for name: " + nameBuilder.toString());
       }
 
       if (isUncompressedName((byte) length)) {
+
+        if (length > MAX_LABEL_LENGTH) {
+          throw new DnsDecodeException("Unsupported label length found, value: " + (int) length);
+        }
 
         byte[] bytes = new byte[length];
         buffer.readBytes(bytes);
@@ -129,13 +144,17 @@ public class DNSStringUtil {
 
         nameBuilder.append(label);
         nameBuilder.append(".");
+        // add label len + dot to total length
+        totalLength = totalLength + label.length() + 1;
+        totalLabels++;
 
       } else if (isCompressedName((byte) length)) {
         // save location in the stream (after reading the 2 (offset) bytes)
         if (currentPosition == -1) {
           // only save first pointer location, there may be multiple
           // pointers forming a chain
-          currentPosition = buffer.getReaderIndex() + 1;
+          //
+          currentPosition = buffer.getReaderIndex();
         }
         // follow 1 or more pointers to the data label.
         followPointerChain(buffer);
@@ -148,7 +167,7 @@ public class DNSStringUtil {
 
     // set index position to the first byte after the first pointer (16 bytes)
     if (currentPosition >= 0) {
-      buffer.setReaderIndex(currentPosition);
+      buffer.setReaderIndex(currentPosition + 1);
     }
 
     return nameBuilder.toString();
@@ -246,7 +265,7 @@ public class DNSStringUtil {
   public static String readLabelData(NetworkData buffer) {
     int length = buffer.readUnsignedByte();
     if (length > MAX_CHARACTER_STRING_LENGTH) {
-      throw new DnsDecodeException("Illegal character string length (> 255), length = " + length);
+      throw new DnsDecodeException("Illegal character string length (> 253), length = " + length);
     }
     if (length > 0) {
       byte[] characterString = new byte[length];
@@ -262,7 +281,7 @@ public class DNSStringUtil {
     byte[] data = value.getBytes();
     if (data.length > MAX_CHARACTER_STRING_LENGTH) {
       throw new DnsEncodeException(
-          "Illegal character string length (> 255), length = " + data.length);
+          "Illegal character string length (> 253), length = " + data.length);
     }
     if (data.length > 0) {
       buffer.writeByte(data.length);

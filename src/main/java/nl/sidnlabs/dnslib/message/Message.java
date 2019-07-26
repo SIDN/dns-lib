@@ -26,14 +26,17 @@ import javax.json.JsonArrayBuilder;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 import lombok.Data;
+import lombok.extern.log4j.Log4j2;
 import nl.sidnlabs.dnslib.message.records.NotImplementedResourceRecord;
 import nl.sidnlabs.dnslib.message.records.ResourceRecord;
 import nl.sidnlabs.dnslib.message.records.ResourceRecordFactory;
 import nl.sidnlabs.dnslib.message.records.edns0.OPTResourceRecord;
 import nl.sidnlabs.dnslib.message.util.DNSStringUtil;
 import nl.sidnlabs.dnslib.message.util.NetworkData;
+import nl.sidnlabs.dnslib.types.OpcodeType;
 import nl.sidnlabs.dnslib.types.ResourceRecordType;
 
+@Log4j2
 @Data
 public class Message {
 
@@ -161,6 +164,14 @@ public class Message {
   public void decode(NetworkData buffer) {
     header = new Header();
     header.decode(buffer);
+
+    if (header.getOpCode() != OpcodeType.STANDARD) {
+      if (log.isDebugEnabled()) {
+        log.debug("Unsupported OPCODE {} do not decode messsage past header", header.getOpCode());
+      }
+
+      return;
+    }
 
     // decode all questions in the message
     for (int i = 0; i < header.getQdCount(); i++) {
