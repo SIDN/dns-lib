@@ -167,9 +167,10 @@ public class Message {
 
     if (header.getOpCode() != OpcodeType.STANDARD) {
       if (log.isDebugEnabled()) {
-        log.debug("Unsupported OPCODE {} do not decode messsage past header", header.getOpCode());
+        log
+            .debug("Unsupported OPCODE {}, do not continue to decode messsage past header",
+                header.getOpCode());
       }
-
       return;
     }
 
