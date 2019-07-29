@@ -42,29 +42,30 @@ public class NAPTRResourceRecord extends AbstractResourceRecord {
   private int length;
 
   @Override
-  public void decode(NetworkData buffer) {
-    super.decode(buffer);
+  public void decode(NetworkData buffer, boolean partial) {
+    super.decode(buffer, partial);
 
-    order = buffer.readUnsignedChar();
+    if (!partial) {
+      order = buffer.readUnsignedChar();
 
-    preference = buffer.readUnsignedChar();
+      preference = buffer.readUnsignedChar();
 
-    flags = DNSStringUtil.readLabelData(buffer);
-    length = 5 + flags.length();
+      flags = DNSStringUtil.readLabelData(buffer);
+      length = 5 + flags.length();
 
-    services = DNSStringUtil.readLabelData(buffer);
-    length = length + services.length() + 1; // 3x16 bits + 1byte services length
+      services = DNSStringUtil.readLabelData(buffer);
+      length = length + services.length() + 1; // 3x16 bits + 1byte services length
 
-    regexp = DNSStringUtil.readLabelData(buffer);
-    length = length + regexp.length() + 1;
+      regexp = DNSStringUtil.readLabelData(buffer);
+      length = length + regexp.length() + 1;
 
-    replacement = DNSStringUtil.readName(buffer);
-    if (replacement == null || replacement.length() == 0) {
-      length = length + 1; // zero byte only
-    } else {
-      length = length + replacement.length() + 1;
+      replacement = DNSStringUtil.readName(buffer);
+      if (replacement == null || replacement.length() == 0) {
+        length = length + 1; // zero byte only
+      } else {
+        length = length + replacement.length() + 1;
+      }
     }
-
   }
 
 
@@ -95,10 +96,17 @@ public class NAPTRResourceRecord extends AbstractResourceRecord {
   @Override
   public JsonObject toJSon() {
     JsonObjectBuilder builder = super.createJsonBuilder();
-    return builder.add("rdata",
-        Json.createObjectBuilder().add("order", (int) order).add("preference", (int) preference)
-            .add("flags", flags).add("services", services).add("regexp", regexp)
-            .add("replacement", replacement).add("length", length))
+    return builder
+        .add("rdata",
+            Json
+                .createObjectBuilder()
+                .add("order", (int) order)
+                .add("preference", (int) preference)
+                .add("flags", flags)
+                .add("services", services)
+                .add("regexp", regexp)
+                .add("replacement", replacement)
+                .add("length", length))
         .build();
   }
 

@@ -31,8 +31,8 @@ public class TSIGResourceRecord extends AbstractResourceRecord {
   private static final long serialVersionUID = 5042862701800260965L;
 
   @Override
-  public void decode(NetworkData buffer) {
-    super.decode(buffer);
+  public void decode(NetworkData buffer, boolean partial) {
+    super.decode(buffer, partial);
   }
 
   @Override

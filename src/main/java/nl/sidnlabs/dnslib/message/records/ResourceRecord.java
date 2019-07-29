@@ -46,7 +46,7 @@ public interface ResourceRecord {
 
   byte[] getRdata();
 
-  void decode(NetworkData buffer);
+  void decode(NetworkData buffer, boolean partial);
 
   void encode(NetworkData buffer);
 

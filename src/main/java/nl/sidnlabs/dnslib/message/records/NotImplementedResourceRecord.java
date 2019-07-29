@@ -37,18 +37,18 @@ public class NotImplementedResourceRecord extends AbstractResourceRecord {
   private static final long serialVersionUID = -6965650782859969009L;
 
   @Override
-  public void decode(NetworkData buffer) {
-    super.decode(buffer);
+  public void decode(NetworkData buffer, boolean partial) {
+    super.decode(buffer, partial);
+
     if (log.isDebugEnabled()) {
-      log.debug("decode unknown RR with name: " + getName());
-      log.debug(" Unknown RR has size: " + (int) rdLength);
+      log.debug("Decode unknown RR with name: " + getName());
+      log.debug("Unknown RR has size: " + (int) rdLength);
       log.debug(toZone(100));
     }
 
-    if (rdLength > 0) {
+    if (!partial && rdLength > 0) {
       buffer.setReaderIndex(buffer.getReaderIndex() + rdLength);
     }
-
   }
 
   @Override
@@ -109,8 +109,13 @@ public class NotImplementedResourceRecord extends AbstractResourceRecord {
 
     JsonObjectBuilder builder = Json.createObjectBuilder();
     return builder
-        .add("rdata", Json.createObjectBuilder().add("class", actualClass).add("type", actualType)
-            .add("rdlength", (int) rdLength).add("rdata", Hex.encodeHexString(rdata)))
+        .add("rdata",
+            Json
+                .createObjectBuilder()
+                .add("class", actualClass)
+                .add("type", actualType)
+                .add("rdlength", (int) rdLength)
+                .add("rdata", Hex.encodeHexString(rdata)))
         .build();
   }
 

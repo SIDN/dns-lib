@@ -47,7 +47,7 @@ public abstract class AbstractResourceRecord implements ResourceRecord, Serializ
   protected byte[] rdata;
 
   @Override
-  public void decode(NetworkData buffer) {
+  public void decode(NetworkData buffer, boolean partial) {
     setName(DNSStringUtil.readName(buffer));
 
     rawType = buffer.readUnsignedChar();
@@ -59,7 +59,19 @@ public abstract class AbstractResourceRecord implements ResourceRecord, Serializ
     // read 16 bits rdlength field
     rdLength = buffer.readUnsignedChar();
 
-    rdata = readRdata(rdLength, buffer);
+    // rdata = readRdata(rdLength, buffer);
+
+    if (partial) {
+      // do not create rdata object, just update the buffer index
+      buffer.setReaderIndex(buffer.getReaderIndex() + rdLength);
+    } else if (rdLength <= buffer.bytesAvailable()) {
+      // invalid length, ignore
+      buffer.markReaderIndex();
+      rdata = new byte[rdLength];
+      buffer.readBytes(rdata);
+      buffer.resetReaderIndex();
+    }
+
   }
 
   @Override
@@ -73,19 +85,19 @@ public abstract class AbstractResourceRecord implements ResourceRecord, Serializ
     buffer.writeInt((int) getTtl());
   }
 
-  protected byte[] readRdata(int rdlength, NetworkData buffer) {
-
-    if (rdlength > buffer.bytesAvailable()) {
-      // invalid length, ignore
-      return new byte[0];
-    }
-
-    buffer.markReaderIndex();
-    byte[] data = new byte[rdlength];
-    buffer.readBytes(data);
-    buffer.resetReaderIndex();
-    return data;
-  }
+  // protected byte[] readRdata(int rdlength, NetworkData buffer) {
+  //
+  // if (rdlength > buffer.bytesAvailable()) {
+  // // invalid length, ignore
+  // return new byte[0];
+  // }
+  //
+  // buffer.markReaderIndex();
+  // byte[] data = new byte[rdlength];
+  // buffer.readBytes(data);
+  // buffer.resetReaderIndex();
+  // return data;
+  // }
 
   public int getRawType() {
     return (int) rawType;

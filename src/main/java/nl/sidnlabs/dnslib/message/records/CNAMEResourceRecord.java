@@ -35,10 +35,12 @@ public class CNAMEResourceRecord extends AbstractResourceRecord {
   private String cname;
 
   @Override
-  public void decode(NetworkData buffer) {
-    super.decode(buffer);
+  public void decode(NetworkData buffer, boolean partial) {
+    super.decode(buffer, partial);
 
-    cname = DNSStringUtil.readName(buffer);
+    if (!partial) {
+      cname = DNSStringUtil.readName(buffer);
+    }
   }
 
   @Override

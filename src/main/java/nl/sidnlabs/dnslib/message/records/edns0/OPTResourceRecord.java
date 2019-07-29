@@ -71,7 +71,7 @@ public class OPTResourceRecord extends AbstractResourceRecord {
   }
 
   @Override
-  public void decode(NetworkData buffer) {
+  public void decode(NetworkData buffer, boolean partial) {
     // name
     name = DNSStringUtil.readName(buffer);
 
@@ -102,8 +102,9 @@ public class OPTResourceRecord extends AbstractResourceRecord {
 
   private void loadOptions(NetworkData buffer) {
     if (rdLeng > buffer.bytesAvailable()) {
-      LOGGER.error("Incorrect edns rdata size, rdlength=" + (int) rdLeng + " and bytesavail:"
-          + buffer.bytesAvailable());
+      LOGGER
+          .error("Incorrect edns rdata size, rdlength=" + (int) rdLeng + " and bytesavail:"
+              + buffer.bytesAvailable());
       return;
     }
 
@@ -195,9 +196,14 @@ public class OPTResourceRecord extends AbstractResourceRecord {
   @Override
   public JsonObject toJSon() {
     JsonObjectBuilder builder = Json.createObjectBuilder();
-    return builder.add("name", name).add("type", type.name())
-        .add("payload-size", (int) udpPlayloadSize).add("rcode", rcode).add("flags", (int) flags)
-        .add("rdata", Json.createObjectBuilder().add("do", dnssecDo)).build();
+    return builder
+        .add("name", name)
+        .add("type", type.name())
+        .add("payload-size", (int) udpPlayloadSize)
+        .add("rcode", rcode)
+        .add("flags", (int) flags)
+        .add("rdata", Json.createObjectBuilder().add("do", dnssecDo))
+        .build();
   }
 
   @Override

@@ -40,15 +40,17 @@ public class SSHFPResourceRecord extends AbstractResourceRecord {
 
 
   @Override
-  public void decode(NetworkData buffer) {
-    super.decode(buffer);
+  public void decode(NetworkData buffer, boolean partial) {
+    super.decode(buffer, partial);
 
-    algorithm = buffer.readUnsignedByte();
+    if (!partial) {
+      algorithm = buffer.readUnsignedByte();
 
-    fingerprintType = buffer.readUnsignedByte();
+      fingerprintType = buffer.readUnsignedByte();
 
-    fingerprint = new byte[rdLength - 2];
-    buffer.readBytes(fingerprint);
+      fingerprint = new byte[rdLength - 2];
+      buffer.readBytes(fingerprint);
+    }
   }
 
   @Override
@@ -65,8 +67,12 @@ public class SSHFPResourceRecord extends AbstractResourceRecord {
   public JsonObject toJSon() {
     JsonObjectBuilder builder = super.createJsonBuilder();
     return builder
-        .add("rdata", Json.createObjectBuilder().add("algorithm", algorithm)
-            .add("fptype", fingerprintType).add("fingerprint", Hex.encodeHexString(fingerprint)))
+        .add("rdata",
+            Json
+                .createObjectBuilder()
+                .add("algorithm", algorithm)
+                .add("fptype", fingerprintType)
+                .add("fingerprint", Hex.encodeHexString(fingerprint)))
         .build();
   }
 

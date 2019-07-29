@@ -40,16 +40,18 @@ public class SRVResourceRecord extends AbstractResourceRecord {
 
 
   @Override
-  public void decode(NetworkData buffer) {
-    super.decode(buffer);
+  public void decode(NetworkData buffer, boolean partial) {
+    super.decode(buffer, partial);
 
-    priority = buffer.readUnsignedChar();
+    if (!partial) {
+      priority = buffer.readUnsignedChar();
 
-    weight = buffer.readUnsignedChar();
+      weight = buffer.readUnsignedChar();
 
-    port = buffer.readUnsignedChar();
+      port = buffer.readUnsignedChar();
 
-    target = DNSStringUtil.readName(buffer);
+      target = DNSStringUtil.readName(buffer);
+    }
   }
 
   @Override
@@ -77,8 +79,12 @@ public class SRVResourceRecord extends AbstractResourceRecord {
   @Override
   public JsonObject toJSon() {
     JsonObjectBuilder builder = super.createJsonBuilder();
-    return builder.add("rdata", Json.createObjectBuilder().add("priority", (int) priority))
-        .add("weight", (int) weight).add("port", (int) port).add("target", target).build();
+    return builder
+        .add("rdata", Json.createObjectBuilder().add("priority", (int) priority))
+        .add("weight", (int) weight)
+        .add("port", (int) port)
+        .add("target", target)
+        .build();
   }
 
 }

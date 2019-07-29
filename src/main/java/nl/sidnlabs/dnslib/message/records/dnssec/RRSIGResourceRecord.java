@@ -77,51 +77,52 @@ public class RRSIGResourceRecord extends AbstractResourceRecord {
   private boolean wildcard;
 
   @Override
-  public void decode(NetworkData buffer) {
-    super.decode(buffer);
+  public void decode(NetworkData buffer, boolean partial) {
+    super.decode(buffer, partial);
+    if (!partial) {
+      char type = buffer.readUnsignedChar();
 
-    char type = buffer.readUnsignedChar();
+      ResourceRecordType rrType = ResourceRecordType.fromValue(type);
+      if (rrType == null) {
+        rrType = ResourceRecordType.RESERVED;
+      }
 
-    ResourceRecordType rrType = ResourceRecordType.fromValue(type);
-    if (rrType == null) {
-      rrType = ResourceRecordType.RESERVED;
+      typeCovered = new TypeMap(rrType, type);
+
+      short alg = buffer.readUnsignedByte();
+      algorithm = AlgorithmType.fromValue(alg);
+
+      labels = buffer.readUnsignedByte();
+      // check if wildacrd was used
+      wildcard = LabelUtil.count(getName()) > labels;
+
+      originalTtl = buffer.readUnsignedInt();
+
+      signatureExpiration = buffer.readUnsignedInt();
+
+      signatureInception = buffer.readUnsignedInt();
+
+      keytag = buffer.readUnsignedChar();
+
+      signerName = DNSStringUtil.readName(buffer);
+
+      int signatureLength = rdLength;
+      if (signerName.length() == 1) {
+        // root
+        signatureLength = signatureLength - 1;
+
+      } else {
+        // non root signer
+        signatureLength = signatureLength - (signerName.length() + 1);
+      }
+      signatureLength = signatureLength - 18;
+
+      signature = new byte[signatureLength];
+
+      buffer.readBytes(signature);
+
+      DATE_FMT.setTimeZone(TimeZone.getTimeZone("UTC"));
     }
-
-    typeCovered = new TypeMap(rrType, type);
-
-    short alg = buffer.readUnsignedByte();
-    algorithm = AlgorithmType.fromValue(alg);
-
-    labels = buffer.readUnsignedByte();
-    // check if wildacrd was used
-    wildcard = LabelUtil.count(getName()) > labels;
-
-    originalTtl = buffer.readUnsignedInt();
-
-    signatureExpiration = buffer.readUnsignedInt();
-
-    signatureInception = buffer.readUnsignedInt();
-
-    keytag = buffer.readUnsignedChar();
-
-    signerName = DNSStringUtil.readName(buffer);
-
-    int signatureLength = rdLength;
-    if (signerName.length() == 1) {
-      // root
-      signatureLength = signatureLength - 1;
-
-    } else {
-      // non root signer
-      signatureLength = signatureLength - (signerName.length() + 1);
-    }
-    signatureLength = signatureLength - 18;
-
-    signature = new byte[signatureLength];
-
-    buffer.readBytes(signature);
-
-    DATE_FMT.setTimeZone(TimeZone.getTimeZone("UTC"));
   }
 
 

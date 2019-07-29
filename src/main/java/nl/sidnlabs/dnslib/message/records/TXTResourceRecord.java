@@ -37,21 +37,24 @@ public class TXTResourceRecord extends AbstractResourceRecord {
 
 
   @Override
-  public void decode(NetworkData buffer) {
-    super.decode(buffer);
-    // the txt rdata contains <length byte><string bytes>
-    int bytesRead = 0;
+  public void decode(NetworkData buffer, boolean partial) {
+    super.decode(buffer, partial);
 
-    StringBuilder builder = new StringBuilder();
-    while (bytesRead < rdLength) {
-      int stringLength = buffer.readUnsignedByte();
-      data = new byte[stringLength];
-      buffer.readBytes(data);
-      builder.append(new String(data));
-      bytesRead = bytesRead + stringLength + 1;
+    if (!partial) {
+      // the txt rdata contains <length byte><string bytes>
+      int bytesRead = 0;
+
+      StringBuilder builder = new StringBuilder();
+      while (bytesRead < rdLength) {
+        int stringLength = buffer.readUnsignedByte();
+        data = new byte[stringLength];
+        buffer.readBytes(data);
+        builder.append(new String(data));
+        bytesRead = bytesRead + stringLength + 1;
+      }
+
+      value = builder.toString();
     }
-
-    value = builder.toString();
   }
 
   @Override

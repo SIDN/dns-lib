@@ -72,35 +72,35 @@ public class NSEC3ResourceRecord extends AbstractResourceRecord {
   private static final byte FLAG_OPTOUT_MASK = 0x01;
 
   @Override
-  public void decode(NetworkData buffer) {
-    super.decode(buffer);
+  public void decode(NetworkData buffer, boolean partial) {
+    super.decode(buffer, partial);
+    if (!partial) {
+      short ha = buffer.readUnsignedByte();
+      hashAlgorithm = DigestType.fromValue(ha);
 
-    short ha = buffer.readUnsignedByte();
-    hashAlgorithm = DigestType.fromValue(ha);
+      flags = buffer.readUnsignedByte();
+      optout = (flags & FLAG_OPTOUT_MASK) == FLAG_OPTOUT_MASK;
+      iterations = buffer.readUnsignedChar();
 
-    flags = buffer.readUnsignedByte();
-    optout = (flags & FLAG_OPTOUT_MASK) == FLAG_OPTOUT_MASK;
-    iterations = buffer.readUnsignedChar();
+      saltLength = buffer.readUnsignedByte();
 
-    saltLength = buffer.readUnsignedByte();
+      salt = new byte[saltLength];
+      if (saltLength > 0) {
+        buffer.readBytes(salt);
+      }
 
-    salt = new byte[saltLength];
-    if (saltLength > 0) {
-      buffer.readBytes(salt);
+      hashLength = buffer.readUnsignedByte();
+      byte[] hash = new byte[hashLength];
+      if (hashLength > 0) {
+        buffer.readBytes(hash);
+      }
+
+      Base32 b32 = new Base32(true);
+      nexthashedownername = b32.encodeAsString(hash);
+
+      int octetAvailable = rdLength - (RDATA_FIXED_FIELDS_LENGTH + saltLength + hashLength);
+      new NSECTypeDecoder().decode(octetAvailable, buffer, types);
     }
-
-    hashLength = buffer.readUnsignedByte();
-    byte[] hash = new byte[hashLength];
-    if (hashLength > 0) {
-      buffer.readBytes(hash);
-    }
-
-    Base32 b32 = new Base32(true);
-    nexthashedownername = b32.encodeAsString(hash);
-
-    int octetAvailable = rdLength - (RDATA_FIXED_FIELDS_LENGTH + saltLength + hashLength);
-    new NSECTypeDecoder().decode(octetAvailable, buffer, types);
-
   }
 
   @Override
@@ -116,11 +116,17 @@ public class NSEC3ResourceRecord extends AbstractResourceRecord {
   @Override
   public JsonObject toJSon() {
     JsonObjectBuilder builder = super.createJsonBuilder();
-    builder.add("rdata",
-        Json.createObjectBuilder().add("hash-algorithm", hashAlgorithm.name()).add("flags", flags)
-            .add("iterations", (int) iterations).add("salt-length", saltLength)
-            .add("salt", Hex.encodeHexString(salt)).add("hash-length", (int) hashLength)
-            .add("nxt-own-name", nexthashedownername));
+    builder
+        .add("rdata",
+            Json
+                .createObjectBuilder()
+                .add("hash-algorithm", hashAlgorithm.name())
+                .add("flags", flags)
+                .add("iterations", (int) iterations)
+                .add("salt-length", saltLength)
+                .add("salt", Hex.encodeHexString(salt))
+                .add("hash-length", (int) hashLength)
+                .add("nxt-own-name", nexthashedownername));
 
     JsonArrayBuilder typeBuilder = Json.createArrayBuilder();
     for (TypeMap type : types) {
@@ -132,8 +138,9 @@ public class NSEC3ResourceRecord extends AbstractResourceRecord {
   @Override
   public String toZone(int maxLength) {
     StringBuilder b = new StringBuilder();
-    b.append(super.toZone(maxLength) + "\t" + hashAlgorithm.getValue() + " " + flags + " "
-        + +(int) iterations + " ");
+    b
+        .append(super.toZone(maxLength) + "\t" + hashAlgorithm.getValue() + " " + flags + " "
+            + +(int) iterations + " ");
 
     if (saltLength == 0) {
       b.append("- ");

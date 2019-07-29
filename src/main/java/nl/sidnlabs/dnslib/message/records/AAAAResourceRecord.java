@@ -46,10 +46,10 @@ public class AAAAResourceRecord extends AbstractResourceRecord {
   private byte[] ipv6Bytes;
 
   @Override
-  public void decode(NetworkData buffer) {
-    super.decode(buffer);
+  public void decode(NetworkData buffer, boolean partial) {
+    super.decode(buffer, partial);
 
-    if (rdLength == 16) {
+    if (!partial && rdLength == 16) {
       // get the 16 raw bytes for the ipv6 address
       ipv6Bytes = buffer.readBytes(16, 16);
 

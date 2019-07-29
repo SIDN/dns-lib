@@ -65,24 +65,24 @@ public class NSEC3ParamResourceRecord extends AbstractResourceRecord {
   private byte[] salt;
 
   @Override
-  public void decode(NetworkData buffer) {
-    super.decode(buffer);
+  public void decode(NetworkData buffer, boolean partial) {
+    super.decode(buffer, partial);
+    if (!partial) {
+      hashAlgorithm = DigestType.fromValue(buffer.readUnsignedByte());
 
-    hashAlgorithm = DigestType.fromValue(buffer.readUnsignedByte());
+      flags = buffer.readUnsignedByte();
 
-    flags = buffer.readUnsignedByte();
+      optout = (flags & 0x01) == 0x01; // 0000 0001
 
-    optout = (flags & 0x01) == 0x01; // 0000 0001
+      iterations = buffer.readUnsignedChar();
 
-    iterations = buffer.readUnsignedChar();
+      saltLength = buffer.readUnsignedByte();
 
-    saltLength = buffer.readUnsignedByte();
-
-    if (saltLength > 0) {
-      salt = new byte[saltLength];
-      buffer.readBytes(salt);
+      if (saltLength > 0) {
+        salt = new byte[saltLength];
+        buffer.readBytes(salt);
+      }
     }
-
 
   }
 
@@ -98,8 +98,9 @@ public class NSEC3ParamResourceRecord extends AbstractResourceRecord {
   @Override
   public String toZone(int maxLength) {
     StringBuilder b = new StringBuilder();
-    b.append(super.toZone(maxLength) + "\t" + hashAlgorithm.getValue() + " " + flags + " "
-        + +(int) iterations + " ");
+    b
+        .append(super.toZone(maxLength) + "\t" + hashAlgorithm.getValue() + " " + flags + " "
+            + +(int) iterations + " ");
 
     if (saltLength == 0) {
       b.append("- ");
@@ -113,10 +114,16 @@ public class NSEC3ParamResourceRecord extends AbstractResourceRecord {
   @Override
   public JsonObject toJSon() {
     JsonObjectBuilder builder = super.createJsonBuilder();
-    return builder.add("rdata",
-        Json.createObjectBuilder().add("hash-algorithm", hashAlgorithm.name()).add("flags", flags)
-            .add("optout", optout).add("iterations", (int) iterations)
-            .add("salt-length", saltLength).add("salt", Hex.encodeHexString(salt)))
+    return builder
+        .add("rdata",
+            Json
+                .createObjectBuilder()
+                .add("hash-algorithm", hashAlgorithm.name())
+                .add("flags", flags)
+                .add("optout", optout)
+                .add("iterations", (int) iterations)
+                .add("salt-length", saltLength)
+                .add("salt", Hex.encodeHexString(salt)))
         .build();
   }
 

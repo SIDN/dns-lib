@@ -37,13 +37,13 @@ public class MXResourceRecord extends AbstractResourceRecord {
 
 
   @Override
-  public void decode(NetworkData buffer) {
-    super.decode(buffer);
+  public void decode(NetworkData buffer, boolean partial) {
+    super.decode(buffer, partial);
 
-    preference = buffer.readUnsignedChar();
-
-    exchange = DNSStringUtil.readName(buffer);
-
+    if (!partial) {
+      preference = buffer.readUnsignedChar();
+      exchange = DNSStringUtil.readName(buffer);
+    }
   }
 
   @Override
@@ -68,8 +68,12 @@ public class MXResourceRecord extends AbstractResourceRecord {
   @Override
   public JsonObject toJSon() {
     JsonObjectBuilder builder = super.createJsonBuilder();
-    return builder.add("rdata",
-        Json.createObjectBuilder().add("preference", (int) preference).add("exchange", exchange))
+    return builder
+        .add("rdata",
+            Json
+                .createObjectBuilder()
+                .add("preference", (int) preference)
+                .add("exchange", exchange))
         .build();
   }
 

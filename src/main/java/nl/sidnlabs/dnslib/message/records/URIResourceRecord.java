@@ -37,13 +37,15 @@ public class URIResourceRecord extends AbstractResourceRecord {
 
 
   @Override
-  public void decode(NetworkData buffer) {
-    super.decode(buffer);
-    priority = buffer.readUnsignedChar();
-    weight = buffer.readUnsignedChar();
-    byte[] uriBytes = new byte[rdLength - 4];
-    buffer.readBytes(uriBytes);
-    uri = new String(uriBytes);
+  public void decode(NetworkData buffer, boolean partial) {
+    super.decode(buffer, partial);
+    if (!partial) {
+      priority = buffer.readUnsignedChar();
+      weight = buffer.readUnsignedChar();
+      byte[] uriBytes = new byte[rdLength - 4];
+      buffer.readBytes(uriBytes);
+      uri = new String(uriBytes);
+    }
   }
 
   @Override

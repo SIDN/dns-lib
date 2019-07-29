@@ -36,12 +36,13 @@ public class HINFOResourceRecord extends AbstractResourceRecord {
   private String os;
 
   @Override
-  public void decode(NetworkData buffer) {
-    super.decode(buffer);
+  public void decode(NetworkData buffer, boolean partial) {
+    super.decode(buffer, partial);
 
-    cpu = DNSStringUtil.readName(buffer);
-
-    os = DNSStringUtil.readName(buffer);
+    if (!partial) {
+      cpu = DNSStringUtil.readName(buffer);
+      os = DNSStringUtil.readName(buffer);
+    }
   }
 
   @Override

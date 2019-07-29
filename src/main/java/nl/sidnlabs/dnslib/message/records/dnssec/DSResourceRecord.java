@@ -56,21 +56,22 @@ public class DSResourceRecord extends AbstractResourceRecord {
 
 
   @Override
-  public void decode(NetworkData buffer) {
-    super.decode(buffer);
+  public void decode(NetworkData buffer, boolean partial) {
+    super.decode(buffer, partial);
+    if (!partial) {
+      keytag = buffer.readUnsignedChar();
 
-    keytag = buffer.readUnsignedChar();
+      short alg = buffer.readUnsignedByte();
+      algorithm = AlgorithmType.fromValue(alg);
 
-    short alg = buffer.readUnsignedByte();
-    algorithm = AlgorithmType.fromValue(alg);
+      short dt = buffer.readUnsignedByte();
+      digestType = DigestType.fromValue(dt);
 
-    short dt = buffer.readUnsignedByte();
-    digestType = DigestType.fromValue(dt);
+      digest = new byte[rdLength - 4];
+      buffer.readBytes(digest);
 
-    digest = new byte[rdLength - 4];
-    buffer.readBytes(digest);
-
-    hex = new String(Hex.encodeHex(digest));
+      hex = new String(Hex.encodeHex(digest));
+    }
   }
 
   @Override
@@ -93,10 +94,14 @@ public class DSResourceRecord extends AbstractResourceRecord {
   @Override
   public JsonObject toJSon() {
     JsonObjectBuilder builder = super.createJsonBuilder();
-    return builder.add("rdata",
-        Json.createObjectBuilder().add("keytag", (int) keytag)
-            .add("algorithm", algorithm != null ? algorithm.name() : "")
-            .add("digest-type", digestType.name()).add("digest", hex))
+    return builder
+        .add("rdata",
+            Json
+                .createObjectBuilder()
+                .add("keytag", (int) keytag)
+                .add("algorithm", algorithm != null ? algorithm.name() : "")
+                .add("digest-type", digestType.name())
+                .add("digest", hex))
         .build();
   }
 

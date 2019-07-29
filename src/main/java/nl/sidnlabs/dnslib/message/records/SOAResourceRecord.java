@@ -42,22 +42,24 @@ public class SOAResourceRecord extends AbstractResourceRecord {
 
 
   @Override
-  public void decode(NetworkData buffer) {
-    super.decode(buffer);
+  public void decode(NetworkData buffer, boolean partial) {
+    super.decode(buffer, partial);
 
-    mName = DNSStringUtil.readName(buffer);
+    if (!partial) {
+      mName = DNSStringUtil.readName(buffer);
 
-    rName = DNSStringUtil.readName(buffer);
+      rName = DNSStringUtil.readName(buffer);
 
-    serial = buffer.readUnsignedInt();
+      serial = buffer.readUnsignedInt();
 
-    refresh = buffer.readUnsignedInt();
+      refresh = buffer.readUnsignedInt();
 
-    retry = buffer.readUnsignedInt();
+      retry = buffer.readUnsignedInt();
 
-    expire = buffer.readUnsignedInt();
+      expire = buffer.readUnsignedInt();
 
-    minimum = buffer.readUnsignedInt();
+      minimum = buffer.readUnsignedInt();
+    }
   }
 
   @Override
@@ -97,10 +99,17 @@ public class SOAResourceRecord extends AbstractResourceRecord {
   @Override
   public JsonObject toJSon() {
     JsonObjectBuilder builder = super.createJsonBuilder();
-    return builder.add("rdata",
-        Json.createObjectBuilder().add("mname", mName).add("rname", rName).add("serial", serial)
-            .add("refresh", refresh).add("retry", retry).add("expire", expire)
-            .add("minimum", minimum))
+    return builder
+        .add("rdata",
+            Json
+                .createObjectBuilder()
+                .add("mname", mName)
+                .add("rname", rName)
+                .add("serial", serial)
+                .add("refresh", refresh)
+                .add("retry", retry)
+                .add("expire", expire)
+                .add("minimum", minimum))
         .build();
   }
 

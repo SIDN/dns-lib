@@ -40,6 +40,4 @@ public class SPFResourceRecord extends TXTResourceRecord {
     JsonObjectBuilder builder = super.createJsonBuilder();
     return builder.add("rdata", Json.createObjectBuilder().add("spf-data", value)).build();
   }
-
-
 }

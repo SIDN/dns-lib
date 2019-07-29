@@ -27,7 +27,6 @@ import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 import lombok.Data;
 import lombok.extern.log4j.Log4j2;
-import nl.sidnlabs.dnslib.message.records.NotImplementedResourceRecord;
 import nl.sidnlabs.dnslib.message.records.ResourceRecord;
 import nl.sidnlabs.dnslib.message.records.ResourceRecordFactory;
 import nl.sidnlabs.dnslib.message.records.edns0.OPTResourceRecord;
@@ -40,6 +39,8 @@ import nl.sidnlabs.dnslib.types.ResourceRecordType;
 @Data
 public class Message {
 
+  private boolean partial;
+
   // size of msg in bytes
   private int bytes;
   private Header header;
@@ -48,49 +49,23 @@ public class Message {
   private List<RRset> answer = new ArrayList<>();
   private List<RRset> authority = new ArrayList<>();
   private List<RRset> additional = new ArrayList<>();
-  // convenience list for fast acces to unknown rrs
-  private List<NotImplementedResourceRecord> unknownRRs = new ArrayList<>();
 
   private OPTResourceRecord pseudo;
 
   public Message() {}
 
   public Message(NetworkData data) {
-    bytes = data.length();
+    this(data, false);
+  }
+
+  public Message(NetworkData data, boolean partial) {
+    this.bytes = data.length();
+    this.partial = partial;
     decode(data);
   }
 
   public Header getHeader() {
     return header;
-  }
-
-  public Message addHeader(Header header) {
-    this.header = header;
-    updateHeaderCounters();
-    return this;
-  }
-
-  public Message build() {
-    updateHeaderCounters();
-    return this;
-  }
-
-  public void updateHeaderCounters() {
-    this.header.setQdCount((char) questions.size());
-    this.header.setAnCount((char) rrsetSize(answer));
-    this.header.setNsCount((char) rrsetSize(authority));
-    this.header.setArCount((char) rrsetSize(additional));
-    // opt rr is part of additional section
-    if (pseudo != null)
-      this.header.setArCount((char) (this.header.getArCount() + 1));
-  }
-
-  private int rrsetSize(List<RRset> rrsets) {
-    int count = 0;
-    for (RRset rrset : rrsets) {
-      count = count + rrset.size();
-    }
-    return count;
   }
 
   public Message addQuestion(Question question) {
@@ -174,7 +149,7 @@ public class Message {
       return;
     }
 
-    // decode all questions in the message
+
     for (int i = 0; i < header.getQdCount(); i++) {
       Question question = decodeQuestion(buffer);
       addQuestion(question);
@@ -182,28 +157,31 @@ public class Message {
 
     for (int i = 0; i < header.getAnCount(); i++) {
       ResourceRecord rr = decodeResourceRecord(buffer);
-      addAnswer(rr);
+      if (!partial) {
+        addAnswer(rr);
+      }
     }
 
     for (int i = 0; i < header.getNsCount(); i++) {
       ResourceRecord rr = decodeResourceRecord(buffer);
-      addAuthority(rr);
+      if (!partial) {
+        addAuthority(rr);
+      }
     }
 
+    // because in lazy mode we do want the OPT record the lazy check
+    // for the addition records is done in the decodeResourceRecord method
     for (int i = 0; i < header.getArCount(); i++) {
       ResourceRecord rr = decodeResourceRecord(buffer);
-      if (rr.getType() != ResourceRecordType.OPT) {
-        addAdditional(rr);
+      if (rr != null && rr.getType() != ResourceRecordType.OPT) {
+        if (!partial) {
+          addAdditional(rr);
+        }
       } else {
         pseudo = (OPTResourceRecord) (rr);
       }
     }
 
-    /*
-     * not all RR may have been decoded into the message to make sure the section counters are
-     * correct do an update of the counters now.
-     */
-    updateHeaderCounters();
   }
 
   private ResourceRecord decodeResourceRecord(NetworkData buffer) {
@@ -225,14 +203,15 @@ public class Message {
 
     ResourceRecord rr = ResourceRecordFactory.getInstance().createResourceRecord(type);
 
-    if (rr instanceof NotImplementedResourceRecord) {
-      unknownRRs.add((NotImplementedResourceRecord) rr);
+    if (partial) {
+      if (rr.getType() != ResourceRecordType.OPT) {
+        rr.decode(buffer, partial);
+      }
+      return rr;
     }
 
-    if (rr != null) {
-      // decode the entire rr now
-      rr.decode(buffer);
-    }
+    // decode the entire rr now
+    rr.decode(buffer, partial);
     return rr;
   }
 
@@ -362,15 +341,6 @@ public class Message {
     }
 
     return length;
-  }
-
-
-  public boolean isUnknownRRFound() {
-    return !unknownRRs.isEmpty();
-  }
-
-  public List<NotImplementedResourceRecord> getUnknownRRs() {
-    return unknownRRs;
   }
 
 }

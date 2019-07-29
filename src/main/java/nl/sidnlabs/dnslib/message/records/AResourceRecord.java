@@ -39,10 +39,10 @@ public class AResourceRecord extends AbstractResourceRecord {
 
 
   @Override
-  public void decode(NetworkData buffer) {
-    super.decode(buffer);
+  public void decode(NetworkData buffer, boolean partial) {
+    super.decode(buffer, partial);
 
-    if (rdLength == 4) {
+    if (!partial && rdLength == 4) {
       InetAddress ip;
       byte[] addrBytes = buffer.readBytes(4, 4);
       try {

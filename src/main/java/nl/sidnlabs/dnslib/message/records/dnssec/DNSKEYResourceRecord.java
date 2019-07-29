@@ -62,27 +62,28 @@ public class DNSKEYResourceRecord extends AbstractResourceRecord {
 
 
   @Override
-  public void decode(NetworkData buffer) {
-    super.decode(buffer);
+  public void decode(NetworkData buffer, boolean partial) {
+    super.decode(buffer, partial);
+    if (!partial) {
+      flags = buffer.readUnsignedChar();
 
-    flags = buffer.readUnsignedChar();
+      protocol = buffer.readUnsignedByte();
 
-    protocol = buffer.readUnsignedByte();
+      short alg = buffer.readUnsignedByte();
+      this.algorithm = AlgorithmType.fromValue(alg);
 
-    short alg = buffer.readUnsignedByte();
-    this.algorithm = AlgorithmType.fromValue(alg);
+      char keysize = (char) (rdLength - 4); // 4 is length flags+proto+alg
+      keydata = new byte[keysize];
+      buffer.readBytes(keydata);
 
-    char keysize = (char) (rdLength - 4); // 4 is length flags+proto+alg
-    keydata = new byte[keysize];
-    buffer.readBytes(keydata);
+      publicKey = KeyUtil.createPublicKey(keydata, alg);
 
-    publicKey = KeyUtil.createPublicKey(keydata, alg);
+      keytag = KeyUtil.createKeyTag(rdata, alg);
 
-    keytag = KeyUtil.createKeyTag(rdata, alg);
+      isZoneKey = KeyUtil.isZoneKey(this);
 
-    isZoneKey = KeyUtil.isZoneKey(this);
-
-    isSepKey = KeyUtil.isSepKey(this);
+      isSepKey = KeyUtil.isSepKey(this);
+    }
   }
 
   public boolean isValid() {

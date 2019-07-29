@@ -76,31 +76,33 @@ public class LOCResourceRecord extends AbstractResourceRecord {
   private long altitude;
 
   @Override
-  public void decode(NetworkData buffer) {
-    super.decode(buffer);
+  public void decode(NetworkData buffer, boolean partial) {
+    super.decode(buffer, partial);
 
-    version = buffer.readUnsignedByte();
-    if (version != 0) {
-      // illegal version
-      throw new DnsDecodeException("LOCResourceRecord Illegal version number: " + version);
+    if (!partial) {
+      version = buffer.readUnsignedByte();
+      if (version != 0) {
+        // illegal version
+        throw new DnsDecodeException("LOCResourceRecord Illegal version number: " + version);
+      }
+
+      size = buffer.readUnsignedByte();
+      // get the first 4 bits, which represent the base.
+      sizeBase = (short) ((size & 0x00f0) >>> 4);
+
+      // get the last 4 bits, which represent the pwer
+      sizePower = (short) (size & 0x000f);
+
+      horizontalPrecision = buffer.readUnsignedByte();
+
+      verticalPrecision = buffer.readUnsignedByte();
+
+      latitude = buffer.readUnsignedInt();
+
+      longitude = buffer.readUnsignedInt();
+
+      altitude = buffer.readUnsignedInt();
     }
-
-    size = buffer.readUnsignedByte();
-    // get the first 4 bits, which represent the base.
-    sizeBase = (short) ((size & 0x00f0) >>> 4);
-
-    // get the last 4 bits, which represent the pwer
-    sizePower = (short) (size & 0x000f);
-
-    horizontalPrecision = buffer.readUnsignedByte();
-
-    verticalPrecision = buffer.readUnsignedByte();
-
-    latitude = buffer.readUnsignedInt();
-
-    longitude = buffer.readUnsignedInt();
-
-    altitude = buffer.readUnsignedInt();
 
   }
 
