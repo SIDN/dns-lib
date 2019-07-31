@@ -40,6 +40,7 @@ import nl.sidnlabs.dnslib.types.ResourceRecordType;
 public class Message {
 
   private boolean partial;
+  private boolean allowFail;
 
   // size of msg in bytes
   private int bytes;
@@ -55,13 +56,23 @@ public class Message {
   public Message() {}
 
   public Message(NetworkData data) {
-    this(data, false);
+    this(data, false, false);
   }
 
-  public Message(NetworkData data, boolean partial) {
+  public Message(NetworkData data, boolean partial, boolean allowFail) {
     this.bytes = data.length();
     this.partial = partial;
-    decode(data);
+    this.allowFail = allowFail;
+    try {
+      decode(data);
+    } catch (Exception e) {
+      if (!allowFail) {
+        // not allowed to fail, rethrow exception
+        throw e;
+      }
+      // failing is allowed, can be case when incomplete dns message is received
+      // e.g. in the case of an ICMP payload
+    }
   }
 
   public Header getHeader() {
