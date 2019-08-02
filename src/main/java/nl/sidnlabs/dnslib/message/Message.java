@@ -59,6 +59,13 @@ public class Message {
     this(data, false, false);
   }
 
+  /**
+   * Decode network bytes into a DNS Message
+   * 
+   * @param data buffer with network data
+   * @param partial do not fully decode the message, only the header, questions and OPT record.
+   * @param allowFail if true, do not throw an exception when decoding fails.
+   */
   public Message(NetworkData data, boolean partial, boolean allowFail) {
     this.bytes = data.length();
     this.partial = partial;
