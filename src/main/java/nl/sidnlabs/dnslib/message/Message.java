@@ -72,6 +72,11 @@ public class Message {
     this.allowFail = allowFail;
     try {
       decode(data);
+
+      if (log.isDebugEnabled()) {
+        String qname = questions.isEmpty() ? "" : questions.get(0).getQName();
+        log.debug("Decoded DNS message type: {} and qname: {}", header.getQr(), qname);
+      }
     } catch (Exception e) {
       if (!allowFail) {
         // not allowed to fail, rethrow exception
