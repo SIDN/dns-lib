@@ -25,30 +25,38 @@ import org.junit.Test;
 public class NameUtilTest {
 
   @Test
-  public void tldIs2ndLevelTest() {
-    Assert.assertEquals("sidn.nl", NameUtil.getDomain("test.www.sidn.nl.").getName());
-    Assert.assertEquals("sidn.nl", NameUtil.getDomain("www.sidn.nl.").getName());
-    Assert.assertEquals("sidn.nl", NameUtil.getDomain("sidn.nl.").getName());
-    Assert.assertEquals("sidn.nl", NameUtil.getDomain("sidn.nl.").getName());
-    Assert.assertEquals("nl.", NameUtil.getDomain("nl.").getName());
-    Assert.assertEquals(".nl.", NameUtil.getDomain(".nl.").getName());
-    Assert.assertEquals("nl", NameUtil.getDomain("nl").getName());
-    Assert.assertEquals(".", NameUtil.getDomain(".").getName());
-    Assert.assertEquals(null, NameUtil.getDomain("").getName());
-    Assert.assertEquals(null, NameUtil.getDomain(null).getName());
-    Assert.assertEquals("test .sidn.nl.", NameUtil.getDomain("test .sidn.nl.").getName());
+  public void testExtractDomainLevelOk() {
+    Domaininfo info = NameUtil.getDomain("sidn.nl.");
+    Assert.assertEquals("sidn.nl", info.getName());
+    Assert.assertEquals(2, info.getLabels());
+
+    info = NameUtil.getDomain("sidn.nl");
+    Assert.assertEquals("sidn.nl", info.getName());
+    Assert.assertEquals(2, info.getLabels());
+
+    info = NameUtil.getDomain("www.sidn.nl.");
+    Assert.assertEquals("sidn.nl", info.getName());
+    Assert.assertEquals(3, info.getLabels());
+
+    info = NameUtil.getDomain("test.www.sidn.nl.");
+    Assert.assertEquals("sidn.nl", info.getName());
+    Assert.assertEquals(4, info.getLabels());
+
+    info = NameUtil.getDomain("www.nzrs.co.nz.");
+    Assert.assertEquals("nzrs.co.nz", info.getName());
+    Assert.assertEquals(4, info.getLabels());
   }
 
   @Test
-  public void emailAddress2ndLevelTest() {
+  public void testEmailAddress2ndLevelOk() {
     // email address should not happen, but sometimes we do see these in the qname.
     Assert
-        .assertEquals("email.test@example.com.",
+        .assertEquals("email.test@example.com",
             NameUtil.getDomain("email.test@example.com.").getName());
   }
 
   @Test
-  public void domainWith2ndLevelAndTldSuffix() {
+  public void testDomainWith2ndLevelAndTldSuffixOk() {
 
     // test fqdn (including final dot)
     Domaininfo info = NameUtil.getDomain("name.example.co.uk");
@@ -59,4 +67,55 @@ public class NameUtilTest {
     Assert.assertTrue(info.getLabels() == 4);
 
   }
+
+
+  @Test
+  public void testIllegalQnameOk() {
+    Domaininfo info = NameUtil.getDomain("-sub1.sidn.nl.");
+
+    Assert.assertEquals("-sub1.sidn.nl", info.getName());
+    Assert.assertEquals(3, info.getLabels());
+
+    info = NameUtil.getDomain("test .sidn.nl.");
+
+    Assert.assertEquals("test .sidn.nl", info.getName());
+    Assert.assertEquals(3, info.getLabels());
+  }
+
+
+  @Test
+  public void testShortQnameOk() {
+    Domaininfo info = NameUtil.getDomain("nl.");
+
+    Assert.assertEquals("nl", info.getName());
+    Assert.assertEquals(1, info.getLabels());
+
+    info = NameUtil.getDomain(".nl.");
+    Assert.assertEquals(".nl", info.getName());
+    Assert.assertEquals(1, info.getLabels());
+
+    info = NameUtil.getDomain("co.nz.");
+
+    Assert.assertEquals("co.nz", info.getName());
+    Assert.assertEquals(2, info.getLabels());
+  }
+
+  @Test
+  public void testEmptyQnameOk() {
+    Domaininfo info = NameUtil.getDomain(".");
+
+    Assert.assertEquals(".", info.getName());
+    Assert.assertEquals(0, info.getLabels());
+
+    info = NameUtil.getDomain(null);
+    Assert.assertEquals(null, info.getName());
+    Assert.assertEquals(0, info.getLabels());
+
+    info = NameUtil.getDomain("");
+    Assert.assertEquals(null, info.getName());
+    Assert.assertEquals(0, info.getLabels());
+
+  }
+
+
 }

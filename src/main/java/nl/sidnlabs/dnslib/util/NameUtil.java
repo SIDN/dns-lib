@@ -30,7 +30,8 @@ public class NameUtil {
    * Get domain info
    * 
    * @param name name to check
-   * @return domain info containing parsed data or original data if input was invalid.
+   * @return Domaininfo with the domain name that is one level beneath the public suffix and the #
+   *         of labels in the input name
    */
   public static Domaininfo getDomain(String name) {
 
@@ -44,31 +45,15 @@ public class NameUtil {
       InternetDomainName domainname = InternetDomainName.from(name);
       return new Domaininfo(domainname.topPrivateDomain().toString(), domainname.parts().size());
     } catch (Exception e) {
-      // bad name
+      // bad name or the name is an exact match with a public suffix entry
+      // continue with fallback
     }
 
-    return new Domaininfo(name, -1);
-
-  }
-
-  public static boolean isFqdn(String name) {
-
-    try {
-      return InternetDomainName.isValid(name);
-    } catch (Exception e) {
-      // bad name
-    }
-
-    return false;
-  }
-
-  public static String getSecondLevel(String name) {
-
-    if (name == null || name.length() == 0) {
-      return null;
-    }
-
-    return getDomain(name).getName();
+    // fallback
+    // name is not a valid domain name, remove any trailing dots and count # of labels by splitting
+    // on the remaining dots
+    String cleanName = StringUtils.removeEnd(name, ".");
+    return new Domaininfo(cleanName, StringUtils.split(cleanName, ".").length);
   }
 
 }
