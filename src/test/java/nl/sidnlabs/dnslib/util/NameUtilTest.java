@@ -45,6 +45,14 @@ public class NameUtilTest {
     info = NameUtil.getDomain("www.nzrs.co.nz.");
     Assert.assertEquals("nzrs.co.nz", info.getName());
     Assert.assertEquals(4, info.getLabels());
+
+    info = NameUtil.getDomain("_gc._tcp.bpw.net.nz.");
+    Assert.assertEquals("bpw.net.nz", info.getName());
+    Assert.assertEquals(5, info.getLabels());
+
+    info = NameUtil.getDomain("_gc._tcp.default-first-site-name._sites.bpw.net.nz.");
+    Assert.assertEquals("bpw.net.nz", info.getName());
+    Assert.assertEquals(7, info.getLabels());
   }
 
   @Test
@@ -114,7 +122,6 @@ public class NameUtilTest {
     info = NameUtil.getDomain("");
     Assert.assertEquals(null, info.getName());
     Assert.assertEquals(0, info.getLabels());
-
   }
 
 

@@ -20,7 +20,6 @@
 package nl.sidnlabs.dnslib.util;
 
 import org.apache.commons.lang3.StringUtils;
-import com.google.common.net.InternetDomainName;
 
 public class NameUtil {
 
