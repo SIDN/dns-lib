@@ -58,9 +58,7 @@ public class NameUtilTest {
   @Test
   public void testEmailAddress2ndLevelOk() {
     // email address should not happen, but sometimes we do see these in the qname.
-    Assert
-        .assertEquals("email.test@example.com",
-            NameUtil.getDomain("email.test@example.com.").getName());
+    Assert.assertEquals(null, NameUtil.getDomain("email.test@example.com.").getName());
   }
 
   @Test
@@ -81,25 +79,24 @@ public class NameUtilTest {
   public void testIllegalQnameOk() {
     Domaininfo info = NameUtil.getDomain("-sub1.sidn.nl.");
 
-    Assert.assertEquals("-sub1.sidn.nl", info.getName());
+    Assert.assertEquals(null, info.getName());
     Assert.assertEquals(3, info.getLabels());
 
     info = NameUtil.getDomain("test .sidn.nl.");
 
-    Assert.assertEquals("test .sidn.nl", info.getName());
+    Assert.assertEquals(null, info.getName());
     Assert.assertEquals(3, info.getLabels());
   }
 
 
   @Test
-  public void testShortQnameOk() {
+  public void testPublicSuffixOk() {
     Domaininfo info = NameUtil.getDomain("nl.");
-
     Assert.assertEquals("nl", info.getName());
     Assert.assertEquals(1, info.getLabels());
 
     info = NameUtil.getDomain(".nl.");
-    Assert.assertEquals(".nl", info.getName());
+    Assert.assertEquals(null, info.getName());
     Assert.assertEquals(1, info.getLabels());
 
     info = NameUtil.getDomain("co.nz.");

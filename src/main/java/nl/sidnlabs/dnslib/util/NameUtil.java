@@ -42,17 +42,23 @@ public class NameUtil {
 
     try {
       InternetDomainName domainname = InternetDomainName.from(name);
+
+      // check if the name is an exact macth for public suffix
+      if (domainname.isPublicSuffix()) {
+        return new Domaininfo(domainname.publicSuffix().toString(), domainname.parts().size());
+      }
+
       return new Domaininfo(domainname.topPrivateDomain().toString(), domainname.parts().size());
     } catch (Exception e) {
       // bad name or the name is an exact match with a public suffix entry
-      // continue with fallback
+      // do nothing here, continue with fallback
     }
 
     // fallback
     // name is not a valid domain name, remove any trailing dots and count # of labels by splitting
     // on the remaining dots
-    String cleanName = StringUtils.removeEnd(name, ".");
-    return new Domaininfo(cleanName, StringUtils.split(cleanName, ".").length);
+    // return null for the name to indicate it is an invalid name
+    return new Domaininfo(null, StringUtils.split(StringUtils.removeEnd(name, "."), ".").length);
   }
 
 }
