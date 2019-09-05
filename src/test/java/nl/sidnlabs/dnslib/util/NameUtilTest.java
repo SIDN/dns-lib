@@ -76,7 +76,7 @@ public class NameUtilTest {
 
 
   @Test
-  public void testIllegalQnameOk() {
+  public void testInvalidQnameOk() {
     Domaininfo info = NameUtil.getDomain("-sub1.sidn.nl.");
 
     Assert.assertEquals(null, info.getName());
@@ -86,6 +86,30 @@ public class NameUtilTest {
 
     Assert.assertEquals(null, info.getName());
     Assert.assertEquals(3, info.getLabels());
+
+    info = NameUtil.getDomain("_.anzrad.co.nz.");
+    Assert.assertEquals(null, info.getName());
+    Assert.assertEquals(4, info.getLabels());
+
+    info = NameUtil.getDomain("r._dns-sd._udp.0x10 0x190x1xp0x190x1ds.ac.nz.");
+    Assert.assertEquals(null, info.getName());
+    Assert.assertEquals(6, info.getLabels());
+
+    info = NameUtil.getDomain(" https.aklc-guest.govt.nz.");
+    Assert.assertEquals(null, info.getName());
+    Assert.assertEquals(4, info.getLabels());
+
+    info = NameUtil.getDomain("xxxx.yyyy@lincolnuni.ac.nz.");
+    Assert.assertEquals(null, info.getName());
+    Assert.assertEquals(4, info.getLabels());
+
+    info = NameUtil.getDomain("_ldap._tcp.dc._msdcs.workgroup.0x1bequ??t?enable.net.nz.");
+    Assert.assertEquals(null, info.getName());
+    Assert.assertEquals(8, info.getLabels());
+
+    info = NameUtil.getDomain("#192.168.51.52.palazzodesign.co.nz.");
+    Assert.assertEquals(null, info.getName());
+    Assert.assertEquals(7, info.getLabels());
   }
 
 
@@ -100,9 +124,12 @@ public class NameUtilTest {
     Assert.assertEquals(1, info.getLabels());
 
     info = NameUtil.getDomain("co.nz.");
-
     Assert.assertEquals("co.nz", info.getName());
     Assert.assertEquals(2, info.getLabels());
+
+    info = NameUtil.getDomain("ruanca.blogspot.co.nz.");
+    Assert.assertEquals("blogspot.co.nz", info.getName());
+    Assert.assertEquals(4, info.getLabels());
   }
 
   @Test

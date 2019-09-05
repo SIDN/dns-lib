@@ -44,11 +44,14 @@ public class NameUtil {
       InternetDomainName domainname = InternetDomainName.from(name);
 
       // check if the name is an exact macth for public suffix
-      if (domainname.isPublicSuffix()) {
-        return new Domaininfo(domainname.publicSuffix().toString(), domainname.parts().size());
+      if (domainname.isRegistrySuffix()) {
+        return new Domaininfo(domainname.registrySuffix().toString(), domainname.parts().size());
       }
 
-      return new Domaininfo(domainname.topPrivateDomain().toString(), domainname.parts().size());
+      if (domainname.isUnderRegistrySuffix()) {
+        return new Domaininfo(domainname.topDomainUnderRegistrySuffix().toString(),
+            domainname.parts().size());
+      }
     } catch (Exception e) {
       // bad name or the name is an exact match with a public suffix entry
       // do nothing here, continue with fallback
