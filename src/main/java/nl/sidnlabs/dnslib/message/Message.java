@@ -192,7 +192,7 @@ public class Message {
       }
     }
 
-    // because in lazy mode we do want the OPT record the lazy check
+    // because in partial decode mode we do want the OPT record the check
     // for the addition records is done in the decodeResourceRecord method
     for (int i = 0; i < header.getArCount(); i++) {
       ResourceRecord rr = decodeResourceRecord(buffer);
@@ -227,7 +227,8 @@ public class Message {
     ResourceRecord rr = ResourceRecordFactory.getInstance().createResourceRecord(type);
 
     if (partial) {
-      if (rr.getType() != ResourceRecordType.OPT) {
+      // only decode the opt record when doing partial decoding
+      if (rr.getType() == ResourceRecordType.OPT) {
         rr.decode(buffer, partial);
       }
       return rr;

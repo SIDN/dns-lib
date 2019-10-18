@@ -137,7 +137,11 @@ public final class InternetDomainName {
    */
   private final int registrySuffixIndex;
 
-  /** Constructor used to implement {@link #from(String)}, and from subclasses. */
+  /**
+   * Constructor used to implement {@link #from(String)}, and from subclasses.
+   * 
+   * @param name name to check
+   */
   InternetDomainName(String name) {
     // Normalize:
     // * ASCII characters to lowercase
@@ -168,8 +172,11 @@ public final class InternetDomainName {
    * "nhs.uk"}.
    *
    * <p>
-   * If a {@code desiredType} is specified, this method only finds suffixes of the given type.
-   * Otherwise, it finds the first suffix of any type.
+   * 
+   * @param desiredType If a {@code desiredType} is specified, this method only finds suffixes of
+   *        the given type. Otherwise, it finds the first suffix of any type.
+   * @return index of the leftmost part of the suffix
+   *
    */
   private int findSuffixOfType(Optional<PublicSuffixType> desiredType) {
     final int partsSize = parts.size();
@@ -212,6 +219,7 @@ public final class InternetDomainName {
    *
    *
    * @param domain A domain name (not IP address)
+   * @return parsed domain name as InternetDomainName instance
    * @throws IllegalArgumentException if {@code domain} is not syntactically valid according to
    *         {@link #isValid}
    * @since 10.0 (previously named {@code fromLenient})
@@ -224,6 +232,7 @@ public final class InternetDomainName {
    * Validation method used by {@code from} to ensure that the domain name is syntactically valid
    * according to RFC 1035.
    *
+   * @param parts labels of name
    * @return Is the domain name syntactically valid?
    */
   private static boolean validateSyntax(List<String> parts) {
@@ -312,8 +321,9 @@ public final class InternetDomainName {
   }
 
   /**
-   * Returns the individual components of this domain name, normalized to all lower case. For
-   * example, for the domain name {@code mail.google.com}, this method returns the list {@code
+   * @return the individual components of this domain name, normalized to all lower case. For
+   *         example, for the domain name {@code mail.google.com}, this method returns the list
+   *         {@code
    * ["mail", "google", "com"]}.
    */
   public ImmutableList<String> parts() {
@@ -357,6 +367,7 @@ public final class InternetDomainName {
    * Note that this method is equivalent to {@link #hasRegistrySuffix()} because all registry
    * suffixes are public suffixes <i>and</i> all public suffixes have registry suffixes.
    *
+   * @return true if contains pub suffix
    * @since 6.0
    */
   public boolean hasPublicSuffix() {
@@ -367,6 +378,7 @@ public final class InternetDomainName {
    * Returns the {@linkplain #isPublicSuffix() public suffix} portion of the domain name, or {@code
    * null} if no public suffix is present.
    *
+   * @return pub suffix
    * @since 6.0
    */
   public InternetDomainName publicSuffix() {
@@ -384,6 +396,7 @@ public final class InternetDomainName {
    * domain, though even that depends on individual browsers' implementations of cookie controls.
    * See <a href="http://www.ietf.org/rfc/rfc2109.txt">RFC 2109</a> for details.
    *
+   * @return true if under pub suffix
    * @since 6.0
    */
   public boolean isUnderPublicSuffix() {
@@ -401,6 +414,7 @@ public final class InternetDomainName {
    * cookies may be set, though even that depends on individual browsers' implementations of cookie
    * controls. See <a href="http://www.ietf.org/rfc/rfc2109.txt">RFC 2109</a> for details.
    *
+   * @return if top private domain
    * @since 6.0
    */
   public boolean isTopPrivateDomain() {
@@ -422,6 +436,7 @@ public final class InternetDomainName {
    * may be set, though even that depends on individual browsers' implementations of cookie
    * controls.
    *
+   * @return top private domain
    * @throws IllegalStateException if this domain does not end with a public suffix
    * @since 6.0
    */
@@ -472,6 +487,7 @@ public final class InternetDomainName {
    * Note that this method is equivalent to {@link #hasPublicSuffix()} because all registry suffixes
    * are public suffixes <i>and</i> all public suffixes have registry suffixes.
    *
+   * @return true if name has registry suffix
    * @since 23.3
    */
   public boolean hasRegistrySuffix() {
@@ -482,6 +498,7 @@ public final class InternetDomainName {
    * Returns the {@linkplain #isRegistrySuffix() registry suffix} portion of the domain name, or
    * {@code null} if no registry suffix is present.
    *
+   * @return registry suffix
    * @since 23.3
    */
   public InternetDomainName registrySuffix() {
@@ -494,6 +511,7 @@ public final class InternetDomainName {
    * www.google.com}, {@code foo.co.uk} and {@code blogspot.com}, but not for {@code com}, {@code
    * co.uk}, or {@code google.invalid}.
    *
+   * @return true if under regustry suffix
    * @since 23.3
    */
   public boolean isUnderRegistrySuffix() {
@@ -510,6 +528,7 @@ public final class InternetDomainName {
    * <b>Warning:</b> This method should not be used to determine the probable highest level parent
    * domain for which cookies may be set. Use {@link #topPrivateDomain()} for that purpose.
    *
+   * @return true if top domain under registry suffix
    * @since 23.3
    */
   public boolean isTopDomainUnderRegistrySuffix() {
@@ -531,6 +550,7 @@ public final class InternetDomainName {
    * <b>Warning:</b> This method should not be used to determine whether a domain is probably the
    * highest level for which cookies may be set. Use {@link #isTopPrivateDomain()} for that purpose.
    *
+   * @return top domain
    * @throws IllegalStateException if this domain does not end with a registry suffix
    * @since 23.3
    */
@@ -542,7 +562,11 @@ public final class InternetDomainName {
     return ancestor(registrySuffixIndex - 1);
   }
 
-  /** Indicates whether this domain is composed of two or more parts. */
+  /**
+   * Indicates whether this domain is composed of two or more parts.
+   * 
+   * @return true if has parent
+   */
   public boolean hasParent() {
     return parts.size() > 1;
   }
@@ -552,6 +576,7 @@ public final class InternetDomainName {
    * current domain with the leftmost part removed. For example, the parent of {@code
    * www.google.com} is {@code google.com}.
    *
+   * @return parent
    * @throws IllegalStateException if the domain has no parent, as determined by {@link #hasParent}
    */
   public InternetDomainName parent() {
@@ -566,6 +591,9 @@ public final class InternetDomainName {
    *
    * <p>
    * TODO: Reasonable candidate for addition to public API.
+   * 
+   * @param levels levels to use
+   * @return ancestor
    */
   private InternetDomainName ancestor(int levels) {
     return from(DOT_JOINER.join(parts.subList(levels, parts.size())));
@@ -576,7 +604,9 @@ public final class InternetDomainName {
    * the current name. For example, {@code InternetDomainName.from("foo.com").child("www.bar")}
    * returns a new {@code InternetDomainName} with the value {@code www.bar.foo.com}. Only lenient
    * validation is performed, as described {@link #from(String) here}.
-   *
+   * 
+   * @param leftParts left parts
+   * @return parsed child
    * @throws NullPointerException if leftParts is null
    * @throws IllegalArgumentException if the resulting name is not valid
    */
@@ -610,6 +640,8 @@ public final class InternetDomainName {
    * }
    * </pre>
    *
+   * @param name name
+   * @return true if valid
    * @since 8.0 (previously named {@code isValidLenient})
    */
   public static boolean isValid(String name) {
@@ -624,6 +656,10 @@ public final class InternetDomainName {
   /**
    * Does the domain name match one of the "wildcard" patterns (e.g. {@code "*.ar"})? If a {@code
    * desiredType} is specified, the wildcard pattern must also match that type.
+   * 
+   * @param desiredType type to use
+   * @param domain domain to use
+   * @return true if match
    */
   private static boolean matchesWildcardSuffixType(Optional<PublicSuffixType> desiredType,
       String domain) {
@@ -635,13 +671,21 @@ public final class InternetDomainName {
   /**
    * If a {@code desiredType} is specified, returns true only if the {@code actualType} is
    * identical. Otherwise, returns true as long as {@code actualType} is present.
+   * 
+   * @param desiredType type to use
+   * @param actualType actual type to use
+   * @return true if match
    */
   private static boolean matchesType(Optional<PublicSuffixType> desiredType,
       Optional<PublicSuffixType> actualType) {
     return desiredType.isPresent() ? desiredType.equals(actualType) : actualType.isPresent();
   }
 
-  /** Returns the domain name, normalized to all lower case. */
+  /**
+   * Returns the domain name, normalized to all lower case.
+   * 
+   * @return string representation
+   */
   @Override
   public String toString() {
     return name;
@@ -651,6 +695,9 @@ public final class InternetDomainName {
    * Equality testing is based on the text supplied by the caller, after normalization as described
    * in the class documentation. For example, a non-ASCII Unicode domain name and the Punycode
    * version of the same domain name would not be considered equal.
+   * 
+   * @param object to check
+   * @return true if same
    */
   @Override
   public boolean equals(@Nullable Object object) {
