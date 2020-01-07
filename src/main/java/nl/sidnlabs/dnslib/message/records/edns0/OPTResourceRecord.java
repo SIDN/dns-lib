@@ -24,9 +24,9 @@ import java.util.List;
 import javax.json.Json;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
-import org.apache.log4j.Logger;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.extern.log4j.Log4j2;
 import nl.sidnlabs.dnslib.message.records.AbstractResourceRecord;
 import nl.sidnlabs.dnslib.message.util.DNSStringUtil;
 import nl.sidnlabs.dnslib.message.util.NetworkData;
@@ -40,13 +40,12 @@ import nl.sidnlabs.dnslib.types.ResourceRecordType;
  * Description Reference Bit 0 DO DNSSEC answer OK [RFC4035][RFC3225] Bit 1-15 Reserved
  *
  */
+@Log4j2
 @Data
 @EqualsAndHashCode(callSuper = true)
 public class OPTResourceRecord extends AbstractResourceRecord {
 
   private static final long serialVersionUID = 1L;
-
-  private static final Logger LOGGER = Logger.getLogger(OPTResourceRecord.class);
 
   private static final char DNSSEC_DO_BIT_MASK = 0x8000; // 1000 0000 0000 0000
 
@@ -95,14 +94,14 @@ public class OPTResourceRecord extends AbstractResourceRecord {
         loadOptions(buffer);
       } catch (Exception e) {
         // ignore
-        LOGGER.error("Could not decode OPT RR", e);
+        log.error("Could not decode OPT RR", e);
       }
     }
   }
 
   private void loadOptions(NetworkData buffer) {
     if (rdLeng > buffer.bytesAvailable()) {
-      LOGGER
+      log
           .error("Incorrect edns rdata size, rdlength=" + (int) rdLeng + " and bytesavail:"
               + buffer.bytesAvailable());
       return;
@@ -162,7 +161,7 @@ public class OPTResourceRecord extends AbstractResourceRecord {
   @Override
   public void encode(NetworkData buffer) {
 
-    LOGGER.debug("encode");
+    log.debug("encode");
 
     // write the name
     buffer.writeByte(0);
