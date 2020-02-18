@@ -73,9 +73,9 @@ public class Message {
     try {
       decode(data);
 
-      if (log.isDebugEnabled()) {
+      if (log.isTraceEnabled()) {
         String qname = questions.isEmpty() ? "" : questions.get(0).getQName();
-        log.debug("Decoded DNS message type: {} and qname: {}", header.getQr(), qname);
+        log.trace("Decoded DNS message type: {} and qname: {}", header.getQr(), qname);
       }
     } catch (Exception e) {
       if (!allowFail) {
