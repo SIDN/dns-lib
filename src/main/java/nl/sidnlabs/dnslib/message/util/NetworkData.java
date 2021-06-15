@@ -33,6 +33,7 @@ public class NetworkData {
 
   private int index = 0;
   private int markedIndex = 0;
+  private int length = 0;
 
   // write part
   private ByteArrayOutputStream backing;
@@ -51,18 +52,31 @@ public class NetworkData {
   public NetworkData(byte[] data) {
     this.buf = data;
     index = 0;
+    length = data.length;
+  }
+
+  /**
+   * Allow for data buffer with additional data, this additional after index "length" will be
+   * ignored
+   * 
+   * @param data
+   * @param length
+   */
+  public NetworkData(byte[] data, int length) {
+    this(data);
+    this.length = length;
   }
 
   public int length() {
-    return buf.length;
+    return length;
   }
 
   public int bytesAvailable() {
-    return buf.length - index;
+    return length - index;
   }
 
   public boolean isBytesAvailable() {
-    return index < (buf.length - 1);
+    return index < (length - 1);
   }
 
   public long readUnsignedInt() {
@@ -92,7 +106,7 @@ public class NetworkData {
   }
 
   public byte[] readBytes() {
-    byte[] destination = new byte[buf.length - index];
+    byte[] destination = new byte[length - index];
     System.arraycopy(buf, index, destination, 0, destination.length);
     index = index + destination.length;
     return destination;
@@ -161,7 +175,7 @@ public class NetworkData {
 
   public int readableBytes() {
     if (buf != null) {
-      return buf.length;
+      return length;
     }
 
     return 0;
