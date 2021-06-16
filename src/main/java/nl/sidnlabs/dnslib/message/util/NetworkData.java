@@ -32,6 +32,7 @@ public class NetworkData {
   private byte[] buf;
 
   private int index = 0;
+  private int baseIndex = 0;
   private int markedIndex = 0;
   private int length = 0;
 
@@ -56,14 +57,17 @@ public class NetworkData {
   }
 
   /**
-   * Allow for data buffer with additional data, this additional after index "length" will be
-   * ignored
+   * Allow for data buffer with additional data. Data before position marked by offset and after
+   * position marked by length will be ignored.
    * 
    * @param data
+   * @param offset
    * @param length
    */
-  public NetworkData(byte[] data, int length) {
-    this(data);
+  public NetworkData(byte[] data, int offset, int length) {
+    this.buf = data;
+    this.index = offset;
+    this.baseIndex = offset;
     this.length = length;
   }
 
@@ -76,7 +80,7 @@ public class NetworkData {
   }
 
   public boolean isBytesAvailable() {
-    return index < (length - 1);
+    return index < length;
   }
 
   public long readUnsignedInt() {
@@ -173,24 +177,34 @@ public class NetworkData {
     return Arrays.copyOf(data, writerIndex);
   }
 
-  public int readableBytes() {
-    if (buf != null) {
-      return length;
-    }
+  // public int readableBytes() {
+  // if (buf != null) {
+  // return length;
+  // }
+  //
+  // return 0;
+  // }
 
-    return 0;
-  }
-
-  public int writableBytes() {
-    return writerIndex;
-  }
+  // public int writableBytes() {
+  // return writerIndex;
+  // }
 
   public int getReaderIndex() {
     return index;
   }
 
   public void setReaderIndex(int index) {
-    this.index = index;
+    setReaderIndex(index, false);
+  }
+
+  public void setReaderIndex(int index, boolean abs) {
+    if (abs) {
+      // when setting absolute index in the buffer, make sure to include the baseindex
+      // baseindex is the start of the data in the buffer
+      this.index = baseIndex + index;
+    } else {
+      this.index = index;
+    }
   }
 
   public int getWriterIndex() {
@@ -214,8 +228,8 @@ public class NetworkData {
    * 
    * @return backing byte array of this buffer
    */
-  public byte[] getBytes() {
-    return buf;
-  }
+  // public byte[] getBytes() {
+  // return buf;
+  // }
 
 }

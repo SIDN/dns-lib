@@ -210,7 +210,7 @@ public class DNSStringUtil {
       }
 
       // goto the pointer location in the buffer
-      buffer.setReaderIndex(offset);
+      buffer.setReaderIndex(offset, true);
       // check for next pointre in case of pointer chaining
       length = buffer.readUnsignedByte();
     } while (isCompressedName((byte) length));
