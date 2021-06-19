@@ -59,7 +59,7 @@ public class NAPTRResourceRecord extends AbstractResourceRecord {
       regexp = DNSStringUtil.readLabelData(buffer);
       length = length + regexp.length() + 1;
 
-      replacement = DNSStringUtil.readName(buffer);
+      replacement = DNSStringUtil.readNameUsingBuffer(buffer);
       if (replacement == null || replacement.length() == 0) {
         length = length + 1; // zero byte only
       } else {

@@ -39,7 +39,7 @@ public class CNAMEResourceRecord extends AbstractResourceRecord {
     super.decode(buffer, partial);
 
     if (!partial) {
-      cname = DNSStringUtil.readName(buffer);
+      cname = DNSStringUtil.readNameUsingBuffer(buffer);
     }
   }
 

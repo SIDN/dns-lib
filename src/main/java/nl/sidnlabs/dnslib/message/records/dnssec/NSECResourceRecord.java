@@ -56,7 +56,7 @@ public class NSECResourceRecord extends AbstractResourceRecord {
   public void decode(NetworkData buffer, boolean partial) {
     super.decode(buffer, partial);
     if (!partial) {
-      nextDomainName = DNSStringUtil.readName(buffer);
+      nextDomainName = DNSStringUtil.readNameUsingBuffer(buffer);
       int octetAvailable = rdLength - (nextDomainName.length() + 1);
       new NSECTypeDecoder().decode(octetAvailable, buffer, types);
     }

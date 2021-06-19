@@ -39,7 +39,7 @@ public class NSResourceRecord extends AbstractResourceRecord {
   public void decode(NetworkData buffer, boolean partial) {
     super.decode(buffer, partial);
     if (!partial) {
-      setNameserver(DNSStringUtil.readName(buffer));
+      setNameserver(DNSStringUtil.readNameUsingBuffer(buffer));
     }
   }
 

@@ -216,7 +216,7 @@ public class Message {
     // skip 16bits with name
     buffer.markReaderIndex();
     // read the name to get to the type bytes after the name
-    DNSStringUtil.readName(buffer);
+    DNSStringUtil.readNameUsingBuffer(buffer);
 
     // read 16 bits with type
     int type = buffer.readUnsignedChar();

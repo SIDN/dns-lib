@@ -104,7 +104,7 @@ public class RRSIGResourceRecord extends AbstractResourceRecord {
 
       keytag = buffer.readUnsignedChar();
 
-      signerName = DNSStringUtil.readName(buffer);
+      signerName = DNSStringUtil.readNameUsingBuffer(buffer);
 
       int signatureLength = rdLength;
       if (signerName.length() == 1) {

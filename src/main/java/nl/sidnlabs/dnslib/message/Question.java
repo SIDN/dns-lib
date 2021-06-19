@@ -21,6 +21,7 @@ package nl.sidnlabs.dnslib.message;
 
 import javax.json.Json;
 import javax.json.JsonObject;
+import org.apache.commons.lang3.StringUtils;
 import lombok.Data;
 import nl.sidnlabs.dnslib.message.util.DNSStringUtil;
 import nl.sidnlabs.dnslib.message.util.NetworkData;
@@ -46,9 +47,9 @@ public class Question {
 
   public void decode(NetworkData buffer) {
 
-    String qname = DNSStringUtil.readName(buffer);
+    String qname = DNSStringUtil.readNameUsingBuffer(buffer);
     // prevent NPs by setting qname to empty string
-    setQName(qname != null ? qname : "");
+    setQName(qname != null ? StringUtils.lowerCase(qname) : "");
 
     qTypeValue = buffer.readUnsignedChar();
     setQType(ResourceRecordType.fromValue(qTypeValue));

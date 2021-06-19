@@ -136,6 +136,11 @@ public class NetworkData {
     return destination;
   }
 
+  public void readBytes(byte[] dst, int pos, int len) {
+    System.arraycopy(buf, index, dst, pos, len);
+    index = index + len;
+  }
+
   public void writeChar(int c) {
     try {
       writeBuffer.writeChar(c);

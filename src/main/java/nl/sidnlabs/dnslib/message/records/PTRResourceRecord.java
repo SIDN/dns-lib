@@ -39,7 +39,7 @@ public class PTRResourceRecord extends AbstractResourceRecord {
   public void decode(NetworkData buffer, boolean partial) {
     super.decode(buffer, partial);
     if (!partial) {
-      ptrDname = DNSStringUtil.readName(buffer);
+      ptrDname = DNSStringUtil.readNameUsingBuffer(buffer);
     }
   }
 

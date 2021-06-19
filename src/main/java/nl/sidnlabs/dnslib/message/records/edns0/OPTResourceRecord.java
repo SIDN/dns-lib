@@ -72,7 +72,7 @@ public class OPTResourceRecord extends AbstractResourceRecord {
   @Override
   public void decode(NetworkData buffer, boolean partial) {
     // name
-    name = DNSStringUtil.readName(buffer);
+    name = DNSStringUtil.readNameUsingBuffer(buffer);
 
     char type = buffer.readUnsignedChar();
     setType(ResourceRecordType.fromValue(type));

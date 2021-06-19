@@ -1,25 +1,5 @@
 package nl.sidnlabs.dnslib.util;
 
-/*
- * This is a copy of the Guava class with a fix to allow qnames start havel labels that start with
- * an underscore. We've sent a pull-request with the patch to Google, when its integrated in Guava
- * this class can be replaced with the Guava version
- */
-
-/*
- * Copyright (C) 2009 The Guava Authors
- *
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
- * in compliance with the License. You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software distributed under the License
- * is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
- * or implied. See the License for the specific language governing permissions and limitations under
- * the License.
- */
-
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
@@ -101,13 +81,13 @@ public final class InternetDomainName {
    * encoding of each part occupies at least two bytes (dot plus label externally, length byte plus
    * label internally). Thus, if all labels have the minimum size of one byte, 127 of them will fit.
    */
-  private static final int MAX_PARTS = 127;
+  //// private static final int MAX_PARTS = 127;
 
   /**
    * Maximum length of a full domain name, including separators, and leaving room for the root
    * label. See <a href="http://www.ietf.org/rfc/rfc2181.txt">RFC 2181</a> part 11.
    */
-  private static final int MAX_LENGTH = 253;
+  // private static final int MAX_LENGTH = 253;
 
   /**
    * Maximum size of a single part of a domain name. See
@@ -142,7 +122,7 @@ public final class InternetDomainName {
    * 
    * @param name name to check
    */
-  InternetDomainName(String name) {
+  InternetDomainName(String name, boolean allowInvalid) {
     // Normalize:
     // * ASCII characters to lowercase
     // * All dot-like characters to '.'
@@ -154,12 +134,15 @@ public final class InternetDomainName {
       name = name.substring(0, name.length() - 1);
     }
 
-    checkArgument(name.length() <= MAX_LENGTH, "Domain name too long: '%s':", name);
+    // checkArgument(name.length() <= MAX_LENGTH, "Domain name too long: '%s':", name);
     this.name = name;
 
     this.parts = ImmutableList.copyOf(DOT_SPLITTER.split(name));
-    checkArgument(parts.size() <= MAX_PARTS, "Domain has too many parts: '%s'", name);
-    checkArgument(validateSyntax(parts), "Not a valid domain name: '%s'", name);
+    // checkArgument(parts.size() <= MAX_PARTS, "Domain has too many parts: '%s'", name);
+    if (!allowInvalid) {
+      // do not always need to validate, sometime upper layer allows invalid names
+      checkArgument(validateSyntax(parts), "Not a valid domain name: '%s'", name);
+    }
 
     this.publicSuffixIndex = findSuffixOfType(Optional.<PublicSuffixType>absent());
     this.registrySuffixIndex = findSuffixOfType(Optional.of(PublicSuffixType.REGISTRY));
@@ -225,7 +208,11 @@ public final class InternetDomainName {
    * @since 10.0 (previously named {@code fromLenient})
    */
   public static InternetDomainName from(String domain) {
-    return new InternetDomainName(checkNotNull(domain));
+    return new InternetDomainName(domain, true);
+  }
+
+  public static InternetDomainName from(String domain, boolean allowInvalid) {
+    return new InternetDomainName(domain, allowInvalid);
   }
 
   /**

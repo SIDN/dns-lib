@@ -40,8 +40,8 @@ public class HINFOResourceRecord extends AbstractResourceRecord {
     super.decode(buffer, partial);
 
     if (!partial) {
-      cpu = DNSStringUtil.readName(buffer);
-      os = DNSStringUtil.readName(buffer);
+      cpu = DNSStringUtil.readNameUsingBuffer(buffer);
+      os = DNSStringUtil.readNameUsingBuffer(buffer);
     }
   }
 

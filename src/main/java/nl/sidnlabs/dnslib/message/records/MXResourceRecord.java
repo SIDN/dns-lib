@@ -42,7 +42,7 @@ public class MXResourceRecord extends AbstractResourceRecord {
 
     if (!partial) {
       preference = buffer.readUnsignedChar();
-      exchange = DNSStringUtil.readName(buffer);
+      exchange = DNSStringUtil.readNameUsingBuffer(buffer);
     }
   }
 

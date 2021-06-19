@@ -50,7 +50,7 @@ public class SRVResourceRecord extends AbstractResourceRecord {
 
       port = buffer.readUnsignedChar();
 
-      target = DNSStringUtil.readName(buffer);
+      target = DNSStringUtil.readNameUsingBuffer(buffer);
     }
   }
 

@@ -20,7 +20,9 @@
 package nl.sidnlabs.dnslib.util;
 
 import org.apache.commons.lang3.StringUtils;
+import lombok.extern.log4j.Log4j2;
 
+@Log4j2
 public class NameUtil {
 
   private NameUtil() {}
@@ -33,6 +35,10 @@ public class NameUtil {
    *         of labels in the input name
    */
   public static Domaininfo getDomain(String name) {
+    return getDomain(name, false);
+  }
+
+  public static Domaininfo getDomain(String name, boolean allowInvalid) {
 
     if (name == null || name.length() == 0) {
       return new Domaininfo(null, 0);
@@ -41,7 +47,7 @@ public class NameUtil {
     }
 
     try {
-      InternetDomainName domainname = InternetDomainName.from(name);
+      InternetDomainName domainname = InternetDomainName.from(name, allowInvalid);
 
       // check if the name is an exact macth for public suffix
       if (domainname.isRegistrySuffix()) {
@@ -55,6 +61,9 @@ public class NameUtil {
     } catch (Exception e) {
       // bad name or the name is an exact match with a public suffix entry
       // do nothing here, continue with fallback
+      if (log.isDebugEnabled()) {
+        log.debug("InternetDomainName error", e);
+      }
     }
 
     // fallback

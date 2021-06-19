@@ -54,6 +54,11 @@ public class DNSStringUtil {
   private static final int MAX_LABELS = 127;
 
   private static final int MAX_POINTER_CHAIN_LENGTH = 10; // TODO: what is the optimal value?
+
+
+  private static final byte DEC_DOT_CHAR_LABEL_SEP = 46;
+  private static final byte[] SHARED_STRING_DATA_BUFFER = new byte[255];
+
   /*
    * 
    * 4.1.4. Message compression
@@ -171,6 +176,78 @@ public class DNSStringUtil {
     }
 
     return nameBuilder.toString();
+  }
+
+  private static String bytesToString(byte[] data, int length) {
+    return new String(data, 0, length, StandardCharsets.US_ASCII);
+  }
+
+
+  public static String readNameUsingBuffer(NetworkData buffer) {
+    int currentPosition = -1;
+    short length = buffer.readUnsignedByte();
+
+    if (length == 0) {
+      /* zero length label means "." root */
+      return ".";
+    }
+
+    // keep track of position in dst buffer
+    int bufferIndex = 0;
+    // keep track of the total length of the name
+    // prevent creating huge name and and getting OOM exception
+    int totalLength = 0;
+    int totalLabels = 0;
+    // keep reading labels until zero length (end of string) is reached
+    while (length > 0) {
+
+      if (totalLabels == MAX_LABELS) {
+        // too many labels used, stop now to prevent possible infinite loop
+        throw new DnsEncodeException("Too many labels (max 127) for name: "
+            + bytesToString(SHARED_STRING_DATA_BUFFER, bufferIndex));
+      }
+
+      if (totalLength > MAX_CHARACTER_STRING_LENGTH) {
+        // protection against OOM
+        throw new DnsEncodeException("total name length length exceeding max (253) for name: "
+            + bytesToString(SHARED_STRING_DATA_BUFFER, bufferIndex));
+      }
+
+      if (isUncompressedName((byte) length)) {
+
+        if (length > MAX_LABEL_LENGTH) {
+          throw new DnsDecodeException("Unsupported label length found, value: " + (int) length);
+        }
+
+        buffer.readBytes(SHARED_STRING_DATA_BUFFER, bufferIndex, length);
+        bufferIndex += length;
+        SHARED_STRING_DATA_BUFFER[bufferIndex++] = DEC_DOT_CHAR_LABEL_SEP;
+        totalLength += length + 1;
+        totalLabels++;
+
+      } else if (isCompressedName((byte) length)) {
+        // save location in the stream (after reading the 2 (offset) bytes)
+        if (currentPosition == -1) {
+          // only save first pointer location, there may be multiple
+          // pointers forming a chain
+          //
+          currentPosition = buffer.getReaderIndex();
+        }
+        // follow 1 or more pointers to the data label.
+        followPointerChain(buffer);
+      } else {
+        throw new DnsDecodeException("Unsupported label type found");
+      }
+
+      length = buffer.readUnsignedByte();
+    }
+
+    // set index position to the first byte after the first pointer (16 bytes)
+    if (currentPosition >= 0) {
+      buffer.setReaderIndex(currentPosition + 1);
+    }
+
+    return bytesToString(SHARED_STRING_DATA_BUFFER, bufferIndex);
   }
 
   /**

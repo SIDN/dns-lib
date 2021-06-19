@@ -46,9 +46,9 @@ public class SOAResourceRecord extends AbstractResourceRecord {
     super.decode(buffer, partial);
 
     if (!partial) {
-      mName = DNSStringUtil.readName(buffer);
+      mName = DNSStringUtil.readNameUsingBuffer(buffer);
 
-      rName = DNSStringUtil.readName(buffer);
+      rName = DNSStringUtil.readNameUsingBuffer(buffer);
 
       serial = buffer.readUnsignedInt();
 
