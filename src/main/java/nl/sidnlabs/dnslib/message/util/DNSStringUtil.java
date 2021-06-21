@@ -183,6 +183,16 @@ public class DNSStringUtil {
   }
 
 
+  /**
+   * Optimized version of the readName method, this version uses a shared buffer to prevent having
+   * to keep allocating memory for new strings. the buffers is used to store all bytes for the
+   * string and when all bytes have been found the bytes are converted into a String.
+   * 
+   * NOTE: This method is not thread safe, due to the shared buffer
+   * 
+   * @param buffer
+   * @return
+   */
   public static String readNameUsingBuffer(NetworkData buffer) {
     int currentPosition = -1;
     short length = buffer.readUnsignedByte();
