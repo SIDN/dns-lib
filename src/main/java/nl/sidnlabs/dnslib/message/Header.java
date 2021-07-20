@@ -21,13 +21,15 @@ package nl.sidnlabs.dnslib.message;
 
 import javax.json.Json;
 import javax.json.JsonObject;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import nl.sidnlabs.dnslib.message.util.NetworkData;
 import nl.sidnlabs.dnslib.types.MessageType;
 import nl.sidnlabs.dnslib.types.OpcodeType;
 import nl.sidnlabs.dnslib.types.RcodeType;
 
-@Data
+@Getter
+@Setter
 public class Header {
 
   /*

@@ -19,8 +19,8 @@
  */
 package nl.sidnlabs.dnslib.message.records.edns0;
 
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
 import nl.sidnlabs.dnslib.message.util.NetworkData;
 
 
@@ -29,8 +29,8 @@ import nl.sidnlabs.dnslib.message.util.NetworkData;
  *      "https://tools.ietf.org/html/draft-hubert-ulevitch-edns-ping-01">draft-hubert-ulevitch-edns-ping-01</a>
  *
  */
-@Data
-@EqualsAndHashCode(callSuper = true)
+@Getter
+@Setter
 public class PingOption extends EDNS0Option {
 
   private byte[] ping;

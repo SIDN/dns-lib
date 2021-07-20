@@ -22,13 +22,13 @@ package nl.sidnlabs.dnslib.message.records;
 import javax.json.Json;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
 import nl.sidnlabs.dnslib.message.util.DNSStringUtil;
 import nl.sidnlabs.dnslib.message.util.NetworkData;
 
-@Data
-@EqualsAndHashCode(callSuper = true)
+@Getter
+@Setter
 public class SOAResourceRecord extends AbstractResourceRecord {
 
   private static final long serialVersionUID = -5562024832624364745L;
@@ -111,6 +111,52 @@ public class SOAResourceRecord extends AbstractResourceRecord {
                 .add("expire", expire)
                 .add("minimum", minimum))
         .build();
+  }
+
+  @Override
+  public int hashCode() {
+    final int prime = 31;
+    int result = super.hashCode();
+    result = prime * result + (int) (expire ^ (expire >>> 32));
+    result = prime * result + ((mName == null) ? 0 : mName.hashCode());
+    result = prime * result + (int) (minimum ^ (minimum >>> 32));
+    result = prime * result + ((rName == null) ? 0 : rName.hashCode());
+    result = prime * result + (int) (refresh ^ (refresh >>> 32));
+    result = prime * result + (int) (retry ^ (retry >>> 32));
+    result = prime * result + (int) (serial ^ (serial >>> 32));
+    return result;
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj)
+      return true;
+    if (!super.equals(obj))
+      return false;
+    if (getClass() != obj.getClass())
+      return false;
+    SOAResourceRecord other = (SOAResourceRecord) obj;
+    if (expire != other.expire)
+      return false;
+    if (mName == null) {
+      if (other.mName != null)
+        return false;
+    } else if (!mName.equals(other.mName))
+      return false;
+    if (minimum != other.minimum)
+      return false;
+    if (rName == null) {
+      if (other.rName != null)
+        return false;
+    } else if (!rName.equals(other.rName))
+      return false;
+    if (refresh != other.refresh)
+      return false;
+    if (retry != other.retry)
+      return false;
+    if (serial != other.serial)
+      return false;
+    return true;
   }
 
 }

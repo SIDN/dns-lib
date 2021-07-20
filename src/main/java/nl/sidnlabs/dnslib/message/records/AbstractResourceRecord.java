@@ -24,16 +24,16 @@ import javax.json.Json;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 import org.apache.commons.lang3.StringUtils;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
 import nl.sidnlabs.dnslib.message.util.DNSStringUtil;
 import nl.sidnlabs.dnslib.message.util.NetworkData;
 import nl.sidnlabs.dnslib.types.ResourceRecordClass;
 import nl.sidnlabs.dnslib.types.ResourceRecordType;
 
 
-@Data
-@EqualsAndHashCode
+@Getter
+@Setter
 public abstract class AbstractResourceRecord implements ResourceRecord, Serializable {
 
   private static final long serialVersionUID = -2781381098732827757L;
@@ -128,4 +128,43 @@ public abstract class AbstractResourceRecord implements ResourceRecord, Serializ
     JsonObjectBuilder builder = createJsonBuilder();
     return builder.add("rdata", Json.createObjectBuilder().add("dummy", "toddo")).build();
   }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj)
+      return true;
+    if (obj == null)
+      return false;
+    if (getClass() != obj.getClass())
+      return false;
+    AbstractResourceRecord other = (AbstractResourceRecord) obj;
+    if (classz != other.classz)
+      return false;
+    if (name == null) {
+      if (other.name != null)
+        return false;
+    } else if (!name.equals(other.name))
+      return false;
+    if (rdLength != other.rdLength)
+      return false;
+    if (ttl != other.ttl)
+      return false;
+    if (type != other.type)
+      return false;
+    return true;
+  }
+
+  @Override
+  public int hashCode() {
+    final int prime = 31;
+    int result = 1;
+    result = prime * result + ((classz == null) ? 0 : classz.hashCode());
+    result = prime * result + ((name == null) ? 0 : name.hashCode());
+    result = prime * result + rdLength;
+    result = prime * result + (int) (ttl ^ (ttl >>> 32));
+    result = prime * result + ((type == null) ? 0 : type.hashCode());
+    return result;
+  }
+
+
 }

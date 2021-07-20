@@ -19,10 +19,12 @@
  */
 package nl.sidnlabs.dnslib.message.records.edns0;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import nl.sidnlabs.dnslib.message.util.NetworkData;
 
-@Data
+@Getter
+@Setter
 public class EDNS0Option {
 
   protected int code;

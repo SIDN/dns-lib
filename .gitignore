@@ -1,0 +1,7 @@
+/target/
+/.clover/
+/RET.log
+**/.DS_Store
+.classpath
+.project
+.settings/

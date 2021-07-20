@@ -25,15 +25,15 @@ import javax.json.Json;
 import javax.json.JsonArrayBuilder;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
 import nl.sidnlabs.dnslib.message.records.AbstractResourceRecord;
 import nl.sidnlabs.dnslib.message.util.DNSStringUtil;
 import nl.sidnlabs.dnslib.message.util.NetworkData;
 import nl.sidnlabs.dnslib.types.TypeMap;
 
-@Data
-@EqualsAndHashCode(callSuper = true)
+@Getter
+@Setter
 public class NSECResourceRecord extends AbstractResourceRecord {
 
   private static final long serialVersionUID = 1L;

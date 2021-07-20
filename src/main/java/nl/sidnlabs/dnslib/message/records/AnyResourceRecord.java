@@ -19,11 +19,11 @@
  */
 package nl.sidnlabs.dnslib.message.records;
 
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
 
-@Data
-@EqualsAndHashCode(callSuper = true)
+@Getter
+@Setter
 public class AnyResourceRecord extends AbstractResourceRecord {
 
   private static final long serialVersionUID = 265175189167604997L;

@@ -19,16 +19,16 @@
  */
 package nl.sidnlabs.dnslib.message.records.edns0;
 
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
 import nl.sidnlabs.dnslib.message.util.NetworkData;
 
 /**
  * @see <a href="http://tools.ietf.org/html/rfc5001">rfc5001</a>
  * 
  */
-@Data
-@EqualsAndHashCode(callSuper = true)
+@Getter
+@Setter
 public class NSidOption extends EDNS0Option {
 
   private String id;

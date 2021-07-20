@@ -24,14 +24,14 @@ import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.lang3.StringUtils;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
 import lombok.extern.log4j.Log4j2;
 import nl.sidnlabs.dnslib.message.util.NetworkData;
 
 @Log4j2
-@Data
-@EqualsAndHashCode(callSuper = true)
+@Getter
+@Setter
 public class NotImplementedResourceRecord extends AbstractResourceRecord {
 
   private static final long serialVersionUID = -6965650782859969009L;

@@ -25,12 +25,14 @@ import javax.json.Json;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 import com.google.common.net.InetAddresses;
-import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
 import nl.sidnlabs.dnslib.exception.DnsDecodeException;
 import nl.sidnlabs.dnslib.message.util.NetworkData;
 
-@Data
+@Getter
+@Setter
 @EqualsAndHashCode(callSuper = true)
 public class AAAAResourceRecord extends AbstractResourceRecord {
 
@@ -84,6 +86,31 @@ public class AAAAResourceRecord extends AbstractResourceRecord {
   public JsonObject toJSon() {
     JsonObjectBuilder builder = super.createJsonBuilder();
     return builder.add("rdata", Json.createObjectBuilder().add("address", address)).build();
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj)
+      return true;
+    if (!super.equals(obj))
+      return false;
+    if (getClass() != obj.getClass())
+      return false;
+    AAAAResourceRecord other = (AAAAResourceRecord) obj;
+    if (address == null) {
+      if (other.address != null)
+        return false;
+    } else if (!address.equals(other.address))
+      return false;
+    return true;
+  }
+
+  @Override
+  public int hashCode() {
+    final int prime = 31;
+    int result = super.hashCode();
+    result = prime * result + ((address == null) ? 0 : address.hashCode());
+    return result;
   }
 
 }

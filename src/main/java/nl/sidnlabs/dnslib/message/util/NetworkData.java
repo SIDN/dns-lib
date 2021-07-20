@@ -29,6 +29,8 @@ import nl.sidnlabs.dnslib.exception.DnsEncodeException;
 
 public class NetworkData {
 
+  private final byte[] stringDecodeBuffer = new byte[255];
+
   private byte[] buf;
 
   private int index = 0;
@@ -69,6 +71,15 @@ public class NetworkData {
     this.index = offset;
     this.baseIndex = offset;
     this.length = length;
+  }
+
+  public NetworkData update(byte[] data, int offset, int length) {
+    this.buf = data;
+    this.index = offset;
+    this.baseIndex = offset;
+    this.length = length;
+
+    return this;
   }
 
   public int length() {
@@ -182,18 +193,6 @@ public class NetworkData {
     return Arrays.copyOf(data, writerIndex);
   }
 
-  // public int readableBytes() {
-  // if (buf != null) {
-  // return length;
-  // }
-  //
-  // return 0;
-  // }
-
-  // public int writableBytes() {
-  // return writerIndex;
-  // }
-
   public int getReaderIndex() {
     return index;
   }
@@ -228,13 +227,8 @@ public class NetworkData {
     this.index = this.index - bytes;
   }
 
-  /**
-   * Get the raw network order bytes
-   * 
-   * @return backing byte array of this buffer
-   */
-  // public byte[] getBytes() {
-  // return buf;
-  // }
+  public byte[] getStringDecodeBuffer() {
+    return stringDecodeBuffer;
+  }
 
 }

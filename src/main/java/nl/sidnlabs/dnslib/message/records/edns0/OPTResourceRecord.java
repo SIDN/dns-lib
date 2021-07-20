@@ -24,8 +24,8 @@ import java.util.List;
 import javax.json.Json;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
 import lombok.extern.log4j.Log4j2;
 import nl.sidnlabs.dnslib.message.records.AbstractResourceRecord;
 import nl.sidnlabs.dnslib.message.util.DNSStringUtil;
@@ -41,8 +41,8 @@ import nl.sidnlabs.dnslib.types.ResourceRecordType;
  *
  */
 @Log4j2
-@Data
-@EqualsAndHashCode(callSuper = true)
+@Getter
+@Setter
 public class OPTResourceRecord extends AbstractResourceRecord {
 
   private static final long serialVersionUID = 1L;
@@ -160,8 +160,6 @@ public class OPTResourceRecord extends AbstractResourceRecord {
 
   @Override
   public void encode(NetworkData buffer) {
-
-    log.debug("encode");
 
     // write the name
     buffer.writeByte(0);

@@ -22,12 +22,12 @@ package nl.sidnlabs.dnslib.message.records;
 import javax.json.Json;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
 import nl.sidnlabs.dnslib.message.util.NetworkData;
 
-@Data
-@EqualsAndHashCode(callSuper = true)
+@Getter
+@Setter
 public class TXTResourceRecord extends AbstractResourceRecord {
 
   private static final long serialVersionUID = 1L;

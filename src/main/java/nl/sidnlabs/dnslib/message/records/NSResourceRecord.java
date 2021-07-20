@@ -22,13 +22,13 @@ package nl.sidnlabs.dnslib.message.records;
 import javax.json.Json;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
 import nl.sidnlabs.dnslib.message.util.DNSStringUtil;
 import nl.sidnlabs.dnslib.message.util.NetworkData;
 
-@Data
-@EqualsAndHashCode(callSuper = true)
+@Getter
+@Setter
 public class NSResourceRecord extends AbstractResourceRecord {
 
   private static final long serialVersionUID = 1023178649874976277L;
@@ -65,6 +65,30 @@ public class NSResourceRecord extends AbstractResourceRecord {
     return builder.add("rdata", Json.createObjectBuilder().add("nameserver", nameserver)).build();
   }
 
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj)
+      return true;
+    if (!super.equals(obj))
+      return false;
+    if (getClass() != obj.getClass())
+      return false;
+    NSResourceRecord other = (NSResourceRecord) obj;
+    if (nameserver == null) {
+      if (other.nameserver != null)
+        return false;
+    } else if (!nameserver.equals(other.nameserver))
+      return false;
+    return true;
+  }
+
+  @Override
+  public int hashCode() {
+    final int prime = 31;
+    int result = super.hashCode();
+    result = prime * result + ((nameserver == null) ? 0 : nameserver.hashCode());
+    return result;
+  }
 
 
 }

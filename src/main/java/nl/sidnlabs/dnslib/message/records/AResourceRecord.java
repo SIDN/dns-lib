@@ -24,13 +24,13 @@ import java.net.UnknownHostException;
 import javax.json.Json;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
 import nl.sidnlabs.dnslib.exception.DnsDecodeException;
 import nl.sidnlabs.dnslib.message.util.NetworkData;
 
-@Data
-@EqualsAndHashCode(callSuper = true)
+@Getter
+@Setter
 public class AResourceRecord extends AbstractResourceRecord {
 
   private static final long serialVersionUID = -1960441085310394001L;
@@ -76,6 +76,31 @@ public class AResourceRecord extends AbstractResourceRecord {
   public JsonObject toJSon() {
     JsonObjectBuilder builder = super.createJsonBuilder();
     return builder.add("rdata", Json.createObjectBuilder().add("address", address)).build();
+  }
+
+  @Override
+  public int hashCode() {
+    final int prime = 31;
+    int result = super.hashCode();
+    result = prime * result + ((address == null) ? 0 : address.hashCode());
+    return result;
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj)
+      return true;
+    if (!super.equals(obj))
+      return false;
+    if (getClass() != obj.getClass())
+      return false;
+    AResourceRecord other = (AResourceRecord) obj;
+    if (address == null) {
+      if (other.address != null)
+        return false;
+    } else if (!address.equals(other.address))
+      return false;
+    return true;
   }
 
 }

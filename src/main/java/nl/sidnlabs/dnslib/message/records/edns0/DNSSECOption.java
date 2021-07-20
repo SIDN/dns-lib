@@ -22,15 +22,15 @@ package nl.sidnlabs.dnslib.message.records.edns0;
 import java.util.ArrayList;
 import java.util.List;
 import org.apache.commons.lang3.StringUtils;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
 import nl.sidnlabs.dnslib.message.util.NetworkData;
 
 /**
  * @see <a href="http://tools.ietf.org/html/rfc6014">rfc6014</a>
  */
-@Data
-@EqualsAndHashCode(callSuper = true)
+@Getter
+@Setter
 public class DNSSECOption extends EDNS0Option {
 
   public static final int OPTION_CODE_DAU = 5;
@@ -52,7 +52,7 @@ public class DNSSECOption extends EDNS0Option {
     algs = new ArrayList<>();
     for (int i = 0; i < len; i++) {
       int alg = buffer.readUnsignedByte();
-      algs.add(alg);
+      algs.add(Integer.valueOf(alg));
     }
   }
 

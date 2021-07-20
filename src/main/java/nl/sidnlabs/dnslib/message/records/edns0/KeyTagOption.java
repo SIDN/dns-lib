@@ -21,16 +21,16 @@ package nl.sidnlabs.dnslib.message.records.edns0;
 
 import java.util.ArrayList;
 import java.util.List;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
 import nl.sidnlabs.dnslib.message.util.NetworkData;
 
 /**
  * @see <a href="https://tools.ietf.org/html/rfc8145#section-4.1">rfc8145</a>
  *
  */
-@Data
-@EqualsAndHashCode(callSuper = true)
+@Getter
+@Setter
 public class KeyTagOption extends EDNS0Option {
 
   private List<Integer> keytags;
@@ -52,7 +52,7 @@ public class KeyTagOption extends EDNS0Option {
         int keys = len / 2;
         for (int i = 0; i < keys; i++) {
           // read 2 bytes
-          keytags.add((int) buffer.readUnsignedChar());
+          keytags.add(Integer.valueOf(buffer.readUnsignedChar()));
         }
       } else {
         // illegal optionlen size, read data to get pointer in correct loc, ignore data.

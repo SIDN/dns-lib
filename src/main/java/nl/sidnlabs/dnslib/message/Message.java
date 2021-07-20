@@ -25,7 +25,8 @@ import javax.json.Json;
 import javax.json.JsonArrayBuilder;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import lombok.extern.log4j.Log4j2;
 import nl.sidnlabs.dnslib.message.records.ResourceRecord;
 import nl.sidnlabs.dnslib.message.records.ResourceRecordFactory;
@@ -36,7 +37,8 @@ import nl.sidnlabs.dnslib.types.OpcodeType;
 import nl.sidnlabs.dnslib.types.ResourceRecordType;
 
 @Log4j2
-@Data
+@Getter
+@Setter
 public class Message {
 
   private boolean partial;

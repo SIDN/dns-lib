@@ -25,12 +25,14 @@ import java.util.List;
 import javax.json.Json;
 import javax.json.JsonArray;
 import javax.json.JsonArrayBuilder;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import nl.sidnlabs.dnslib.message.records.ResourceRecord;
 import nl.sidnlabs.dnslib.types.ResourceRecordClass;
 import nl.sidnlabs.dnslib.types.ResourceRecordType;
 
-@Data
+@Getter
+@Setter
 public class RRset implements Serializable {
 
   private static final long serialVersionUID = -8053869237612837919L;

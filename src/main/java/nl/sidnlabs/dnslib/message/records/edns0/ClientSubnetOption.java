@@ -21,8 +21,8 @@ package nl.sidnlabs.dnslib.message.records.edns0;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
 import nl.sidnlabs.dnslib.exception.DnsDecodeException;
 import nl.sidnlabs.dnslib.message.util.NetworkData;
 
@@ -30,8 +30,8 @@ import nl.sidnlabs.dnslib.message.util.NetworkData;
  * http://tools.ietf.org/html/draft-vandergaast-edns-client-subnet-02
  *
  */
-@Data
-@EqualsAndHashCode(callSuper = true)
+@Getter
+@Setter
 public class ClientSubnetOption extends EDNS0Option {
 
   private int fam;

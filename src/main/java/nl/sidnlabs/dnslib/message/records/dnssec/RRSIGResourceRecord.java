@@ -26,8 +26,8 @@ import javax.json.Json;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 import org.apache.commons.codec.binary.Base64;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
 import nl.sidnlabs.dnslib.message.records.AbstractResourceRecord;
 import nl.sidnlabs.dnslib.message.util.DNSStringUtil;
 import nl.sidnlabs.dnslib.message.util.NetworkData;
@@ -36,8 +36,8 @@ import nl.sidnlabs.dnslib.types.ResourceRecordType;
 import nl.sidnlabs.dnslib.types.TypeMap;
 import nl.sidnlabs.dnslib.util.LabelUtil;
 
-@Data
-@EqualsAndHashCode(callSuper = true)
+@Getter
+@Setter
 public class RRSIGResourceRecord extends AbstractResourceRecord {
 
   private static final long serialVersionUID = 1L;

@@ -22,13 +22,15 @@ package nl.sidnlabs.dnslib.message;
 import javax.json.Json;
 import javax.json.JsonObject;
 import org.apache.commons.lang3.StringUtils;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import nl.sidnlabs.dnslib.message.util.DNSStringUtil;
 import nl.sidnlabs.dnslib.message.util.NetworkData;
 import nl.sidnlabs.dnslib.types.ResourceRecordClass;
 import nl.sidnlabs.dnslib.types.ResourceRecordType;
 
-@Data
+@Getter
+@Setter
 public class Question {
 
   private String qName;
@@ -68,4 +70,34 @@ public class Question {
         .build();
   }
 
+  @Override
+  public int hashCode() {
+    final int prime = 31;
+    int result = 1;
+    result = prime * result + qClassValue;
+    result = prime * result + ((qName == null) ? 0 : qName.hashCode());
+    result = prime * result + qTypeValue;
+    return result;
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj)
+      return true;
+    if (obj == null)
+      return false;
+    if (getClass() != obj.getClass())
+      return false;
+    Question other = (Question) obj;
+    if (qClassValue != other.qClassValue)
+      return false;
+    if (qName == null) {
+      if (other.qName != null)
+        return false;
+    } else if (!qName.equals(other.qName))
+      return false;
+    if (qTypeValue != other.qTypeValue)
+      return false;
+    return true;
+  }
 }

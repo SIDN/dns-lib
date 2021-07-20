@@ -57,7 +57,6 @@ public class DNSStringUtil {
 
 
   private static final byte DEC_DOT_CHAR_LABEL_SEP = 46;
-  private static final byte[] SHARED_STRING_DATA_BUFFER = new byte[255];
 
   /*
    * 
@@ -194,6 +193,11 @@ public class DNSStringUtil {
    * @return
    */
   public static String readNameUsingBuffer(NetworkData buffer) {
+    return readNameUsingBuffer(buffer, buffer.getStringDecodeBuffer());
+
+  }
+
+  public static String readNameUsingBuffer(NetworkData buffer, byte[] stringBuffer) {
     int currentPosition = -1;
     short length = buffer.readUnsignedByte();
 
@@ -213,14 +217,14 @@ public class DNSStringUtil {
 
       if (totalLabels == MAX_LABELS) {
         // too many labels used, stop now to prevent possible infinite loop
-        throw new DnsEncodeException("Too many labels (max 127) for name: "
-            + bytesToString(SHARED_STRING_DATA_BUFFER, bufferIndex));
+        throw new DnsEncodeException(
+            "Too many labels (max 127) for name: " + bytesToString(stringBuffer, bufferIndex));
       }
 
       if (totalLength > MAX_CHARACTER_STRING_LENGTH) {
         // protection against OOM
         throw new DnsEncodeException("total name length length exceeding max (253) for name: "
-            + bytesToString(SHARED_STRING_DATA_BUFFER, bufferIndex));
+            + bytesToString(stringBuffer, bufferIndex));
       }
 
       if (isUncompressedName((byte) length)) {
@@ -229,9 +233,9 @@ public class DNSStringUtil {
           throw new DnsDecodeException("Unsupported label length found, value: " + (int) length);
         }
 
-        buffer.readBytes(SHARED_STRING_DATA_BUFFER, bufferIndex, length);
+        buffer.readBytes(stringBuffer, bufferIndex, length);
         bufferIndex += length;
-        SHARED_STRING_DATA_BUFFER[bufferIndex++] = DEC_DOT_CHAR_LABEL_SEP;
+        stringBuffer[bufferIndex++] = DEC_DOT_CHAR_LABEL_SEP;
         totalLength += length + 1;
         totalLabels++;
 
@@ -257,7 +261,7 @@ public class DNSStringUtil {
       buffer.setReaderIndex(currentPosition + 1);
     }
 
-    return bytesToString(SHARED_STRING_DATA_BUFFER, bufferIndex);
+    return bytesToString(stringBuffer, bufferIndex);
   }
 
   /**

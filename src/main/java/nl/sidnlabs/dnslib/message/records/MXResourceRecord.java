@@ -22,13 +22,13 @@ package nl.sidnlabs.dnslib.message.records;
 import javax.json.Json;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
 import nl.sidnlabs.dnslib.message.util.DNSStringUtil;
 import nl.sidnlabs.dnslib.message.util.NetworkData;
 
-@Data
-@EqualsAndHashCode(callSuper = true)
+@Getter
+@Setter
 public class MXResourceRecord extends AbstractResourceRecord {
 
   private static final long serialVersionUID = 6877262886026363052L;
@@ -75,6 +75,34 @@ public class MXResourceRecord extends AbstractResourceRecord {
                 .add("preference", (int) preference)
                 .add("exchange", exchange))
         .build();
+  }
+
+  @Override
+  public int hashCode() {
+    final int prime = 31;
+    int result = super.hashCode();
+    result = prime * result + ((exchange == null) ? 0 : exchange.hashCode());
+    result = prime * result + preference;
+    return result;
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj)
+      return true;
+    if (!super.equals(obj))
+      return false;
+    if (getClass() != obj.getClass())
+      return false;
+    MXResourceRecord other = (MXResourceRecord) obj;
+    if (exchange == null) {
+      if (other.exchange != null)
+        return false;
+    } else if (!exchange.equals(other.exchange))
+      return false;
+    if (preference != other.preference)
+      return false;
+    return true;
   }
 
 }

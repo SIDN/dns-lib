@@ -24,8 +24,8 @@ import java.text.NumberFormat;
 import javax.json.Json;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
 import nl.sidnlabs.dnslib.exception.DnsDecodeException;
 import nl.sidnlabs.dnslib.message.util.NetworkData;
 
@@ -36,8 +36,8 @@ import nl.sidnlabs.dnslib.message.util.NetworkData;
  * Brian Wellington (bwelling@xbill.org)
  */
 
-@Data
-@EqualsAndHashCode(callSuper = true)
+@Getter
+@Setter
 public class LOCResourceRecord extends AbstractResourceRecord {
 
   private static NumberFormat w2;
