@@ -3,7 +3,7 @@
 
 	<groupId>nl.sidnlabs</groupId>
 	<artifactId>dnslib</artifactId>
-	<version>0.2.14-SNAPSHOT</version>
+	<version>0.2.14</version>
 
 	<name>${project.groupId}:${project.artifactId}</name>
 	<description>DNS library</description>
@@ -29,7 +29,7 @@
 		<connection>scm:git:ssh://github.com/SIDN/dns-lib.git</connection>
 		<developerConnection>scm:git:ssh://github.com/SIDN/dns-lib.git</developerConnection>
 		<url>https://github.com/SIDN/dnslib/tree/master/</url>
-		<tag>HEAD</tag>
+		<tag>dnslib-0.2.14</tag>
 	</scm>
 
 	<properties>
@@ -112,6 +112,10 @@
 			<id>ossrh</id>
 			<url>https://oss.sonatype.org/content/repositories/snapshots</url>
 		</snapshotRepository>
+		<repository>
+		   <id>ossrh</id>
+		   <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+		 </repository>
 	</distributionManagement>
 	<build>
 		<plugins>
@@ -167,12 +171,12 @@
 			<plugin>
 				<groupId>org.sonatype.plugins</groupId>
 				<artifactId>nexus-staging-maven-plugin</artifactId>
-				<version>1.6.8</version>
+				<version>1.6.7</version>
 				<extensions>true</extensions>
 				<configuration>
 					<serverId>ossrh</serverId>
 					<nexusUrl>https://oss.sonatype.org/</nexusUrl>
-					<autoReleaseAfterClose>true</autoReleaseAfterClose>
+					<autoReleaseAfterClose>false</autoReleaseAfterClose>
 				</configuration>
 			</plugin>
 			<plugin>
