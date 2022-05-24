@@ -3,7 +3,7 @@
 
 	<groupId>nl.sidnlabs</groupId>
 	<artifactId>dnslib</artifactId>
-	<version>0.2.16-SNAPSHOT</version>
+	<version>0.2.15</version>
 
 	<name>${project.groupId}:${project.artifactId}</name>
 	<description>DNS library</description>
@@ -29,7 +29,7 @@
 		<connection>scm:git:ssh://github.com/SIDN/dns-lib.git</connection>
 		<developerConnection>scm:git:ssh://github.com/SIDN/dns-lib.git</developerConnection>
 		<url>https://github.com/SIDN/dnslib/tree/master/</url>
-		<tag>dnslib-0.2.15-SNAPSHOT</tag>
+		<tag>dnslib-0.2.15</tag>
 	</scm>
 
 	<properties>
@@ -172,7 +172,7 @@
 			<plugin>
 				<groupId>org.sonatype.plugins</groupId>
 				<artifactId>nexus-staging-maven-plugin</artifactId>
-				<version>1.6.7</version>
+				<version>1.6.6</version>
 				<extensions>true</extensions>
 				<configuration>
 					<serverId>ossrh</serverId>
