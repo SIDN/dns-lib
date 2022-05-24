@@ -29,7 +29,7 @@
 		<connection>scm:git:ssh://github.com/SIDN/dns-lib.git</connection>
 		<developerConnection>scm:git:ssh://github.com/SIDN/dns-lib.git</developerConnection>
 		<url>https://github.com/SIDN/dnslib/tree/master/</url>
-		<tag>dnslib-0.2.15</tag>
+		<tag>HEAD</tag>
 	</scm>
 
 	<properties>
