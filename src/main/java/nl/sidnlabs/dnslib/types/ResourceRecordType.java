@@ -146,7 +146,10 @@ public enum ResourceRecordType {
   CDNSKEY(60),
   OPENPGPKEY(61),
   CSYNC(62),
-  // Unassigned 63-98
+  ZONEMD(63),
+  SVCB(64),
+  HTTPS(65),
+  // Unassigned 66-98
   SPF(99),
   UINFO(100),
   UID(101),
@@ -214,7 +217,7 @@ public enum ResourceRecordType {
       // Unassigned 110-248
       // Unassigned 260-32767
       // Unassigned 32770-65279
-      if ((value == 54) || (value >= 63 && value <= 98) || (value >= 110 && value <= 248)
+      if ((value == 54) || (value >= 66 && value <= 98) || (value >= 110 && value <= 248)
           || (value >= 260 && value <= 32767) || (value >= 32770 && value <= 65279)) {
         return UNASSIGNED;
       } else if (value >= 65280 && value <= 65534) {

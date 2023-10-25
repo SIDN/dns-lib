@@ -134,14 +134,7 @@ public class OPTResourceRecord extends AbstractResourceRecord {
       // 1 dnssec DAU http://tools.ietf.org/html/rfc6975
       // 2 ednsping http://tools.ietf.org/html/draft-hubert-ulevitch-edns-ping-01
 
-      // powerdns edns ping uses udp size 1200
-      // option length 4
-      if (udpPlayloadSize == POWERDNS_EDNSPING_UDPSIZE && optionlen == POWERDNS_EDNSPING_LENGTH) {
-        return new PingOption(optioncode, optionlen, opt);
-      } else {
-        // must be dnssec DAU
-        return new DNSSECOption(optioncode, optionlen, opt);
-      }
+      return new DNSSECOption(optioncode, optionlen, opt);
     } else if (optioncode == 6 || optioncode == 7) {
       // decode dnssec option
       return new DNSSECOption(optioncode, optionlen, opt);
@@ -152,6 +145,8 @@ public class OPTResourceRecord extends AbstractResourceRecord {
       return new PaddingOption(optioncode, optionlen, opt);
     } else if (optioncode == 14) { // dns key
       return new KeyTagOption(optioncode, optionlen, opt);
+    } else if (optioncode == 15) { // extended errors
+      return new EDEOption(optioncode, optionlen, opt);
     } else {
       return new EDNS0Option(optioncode, optionlen, opt);
     }
