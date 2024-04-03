@@ -3,7 +3,7 @@
 
 	<groupId>nl.sidnlabs</groupId>
 	<artifactId>dnslib</artifactId>
-	<version>0.2.17-SNAPSHOT</version>
+	<version>0.2.16</version>
 
 	<name>${project.groupId}:${project.artifactId}</name>
 	<description>DNS library</description>
@@ -186,7 +186,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-release-plugin</artifactId>
-				<version>2.5.3</version>
+				<version>3.0.1</version>
 				<configuration>
 					<autoVersionSubmodules>true</autoVersionSubmodules>
 					<useReleaseProfile>false</useReleaseProfile>
