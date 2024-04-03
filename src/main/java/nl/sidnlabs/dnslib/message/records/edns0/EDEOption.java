@@ -25,7 +25,7 @@ import nl.sidnlabs.dnslib.message.util.NetworkData;
 
 
 /**
- * @see https://www.rfc-editor.org/rfc/rfc8914.html#name-defined-extended-dns-errors
+ * @see <a href="https://www.rfc-editor.org/rfc/rfc8914.html#name-defined-extended-dns-errors">rfc8914</a>
  *
  */
 @Getter
