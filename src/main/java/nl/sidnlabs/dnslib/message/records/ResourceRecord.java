@@ -45,6 +45,8 @@ public interface ResourceRecord {
   char getRdLength();
 
   byte[] getRdata();
+  
+  String rDataToString();
 
   void decode(NetworkData buffer, boolean partial);
 

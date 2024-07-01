@@ -79,4 +79,8 @@ public class TXTResourceRecord extends AbstractResourceRecord {
     return builder.add("rdata", Json.createObjectBuilder().add("txt-data", value)).build();
   }
 
+  @Override
+  public String rDataToString() {
+	  return value;
+  }
 }

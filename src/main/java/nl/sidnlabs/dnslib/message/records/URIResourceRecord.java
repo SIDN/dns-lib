@@ -77,6 +77,9 @@ public class URIResourceRecord extends AbstractResourceRecord {
         .build();
   }
 
-
+  @Override
+  public String rDataToString() {
+	  return uri;
+  }
 
 }

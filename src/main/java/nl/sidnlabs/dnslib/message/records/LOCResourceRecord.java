@@ -128,6 +128,7 @@ public class LOCResourceRecord extends AbstractResourceRecord {
 
   }
 
+	  
   /**
    * The code for converting the data to zone format has been copied from dnsjava. see:
    * http://www.dnsjava.org/
@@ -221,5 +222,37 @@ public class LOCResourceRecord extends AbstractResourceRecord {
       sb.append(formatter.format(value));
     }
   }
+  
+  @Override
+  public String rDataToString() {
 
+    StringBuilder sb = new StringBuilder();
+
+    /* Latitude */
+    sb.append(positionToString(latitude, 'N', 'S'));
+    sb.append(",");
+
+    /* Latitude */
+    sb.append(positionToString(longitude, 'E', 'W'));
+    sb.append(",");
+
+    /* Altitude */
+    renderFixedPoint(sb, w2, altitude - 10000000, 100);
+    sb.append("m,");
+
+    /* Size */
+    renderFixedPoint(sb, w2, size, 100);
+    sb.append("m,");
+
+    /* Horizontal precision */
+    renderFixedPoint(sb, w2, horizontalPrecision, 100);
+    sb.append("m,");
+
+    /* Vertical precision */
+    renderFixedPoint(sb, w2, verticalPrecision, 100);
+    sb.append("m");
+
+    return sb.toString();
+
+  }
 }

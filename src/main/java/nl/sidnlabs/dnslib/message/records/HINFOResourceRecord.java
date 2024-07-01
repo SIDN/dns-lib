@@ -66,4 +66,8 @@ public class HINFOResourceRecord extends AbstractResourceRecord {
     return builder.add("rdata", Json.createObjectBuilder().add("cpu", cpu).add("os", os)).build();
   }
 
+  @Override
+  public String rDataToString() {
+	  return cpu + "," + os;
+  }
 }

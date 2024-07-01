@@ -62,5 +62,9 @@ public class PTRResourceRecord extends AbstractResourceRecord {
     return builder.add("rdata", Json.createObjectBuilder().add("ptrdname", ptrDname)).build();
   }
 
+  @Override
+  public String rDataToString() {
+	  return ptrDname;
+  }
 
 }

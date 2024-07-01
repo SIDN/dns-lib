@@ -89,6 +89,10 @@ public class NSResourceRecord extends AbstractResourceRecord {
     result = prime * result + ((nameserver == null) ? 0 : nameserver.hashCode());
     return result;
   }
-
+  
+  @Override
+  public String rDataToString() {
+	  return nameserver;
+  }
 
 }

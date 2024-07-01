@@ -65,5 +65,9 @@ public class CNAMEResourceRecord extends AbstractResourceRecord {
     return builder.add("rdata", Json.createObjectBuilder().add("cname", cname)).build();
   }
 
+  @Override
+  public String rDataToString() {
+	  return cname;
+  }
 
 }

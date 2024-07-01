@@ -166,5 +166,8 @@ public abstract class AbstractResourceRecord implements ResourceRecord, Serializ
     return result;
   }
 
-
+  @Override
+  public String rDataToString() {
+	  return null;
+  }
 }

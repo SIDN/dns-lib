@@ -113,4 +113,9 @@ public class AAAAResourceRecord extends AbstractResourceRecord {
     return result;
   }
 
+  @Override
+  public String rDataToString() {
+	  return address;
+  }
+  
 }

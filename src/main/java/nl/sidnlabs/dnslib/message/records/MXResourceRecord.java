@@ -104,5 +104,10 @@ public class MXResourceRecord extends AbstractResourceRecord {
       return false;
     return true;
   }
+  
+  @Override
+  public String rDataToString() {
+	  return preference + "," + exchange;
+  }
 
 }

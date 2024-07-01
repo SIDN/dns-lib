@@ -102,5 +102,10 @@ public class AResourceRecord extends AbstractResourceRecord {
       return false;
     return true;
   }
+  
+  @Override
+  public String rDataToString() {
+	  return address;
+  }
 
 }
