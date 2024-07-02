@@ -21,6 +21,7 @@ package nl.sidnlabs.dnslib.message.records.edns0;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import lombok.Getter;
 import lombok.Setter;
 import nl.sidnlabs.dnslib.message.util.NetworkData;

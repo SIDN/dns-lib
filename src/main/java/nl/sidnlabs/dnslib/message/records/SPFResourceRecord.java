@@ -19,9 +19,9 @@
  */
 package nl.sidnlabs.dnslib.message.records;
 
-import javax.json.Json;
-import javax.json.JsonObject;
-import javax.json.JsonObjectBuilder;
+import jakarta.json.Json;
+import jakarta.json.JsonObject;
+import jakarta.json.JsonObjectBuilder;
 import lombok.Getter;
 import lombok.Setter;
 

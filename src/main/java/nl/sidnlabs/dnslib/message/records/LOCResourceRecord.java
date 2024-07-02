@@ -21,9 +21,10 @@ package nl.sidnlabs.dnslib.message.records;
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
-import javax.json.Json;
-import javax.json.JsonObject;
-import javax.json.JsonObjectBuilder;
+
+import jakarta.json.Json;
+import jakarta.json.JsonObject;
+import jakarta.json.JsonObjectBuilder;
 import lombok.Getter;
 import lombok.Setter;
 import nl.sidnlabs.dnslib.exception.DnsDecodeException;

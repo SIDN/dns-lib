@@ -19,7 +19,7 @@
  */
 package nl.sidnlabs.dnslib.message.records;
 
-import javax.json.JsonObject;
+import jakarta.json.JsonObject;
 import lombok.Getter;
 import lombok.Setter;
 import nl.sidnlabs.dnslib.message.util.NetworkData;

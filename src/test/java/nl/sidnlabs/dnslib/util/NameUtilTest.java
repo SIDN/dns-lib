@@ -19,60 +19,66 @@
  */
 package nl.sidnlabs.dnslib.util;
 
-import org.junit.Assert;
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import org.apache.logging.log4j.core.util.Assert;
+import org.junit.jupiter.api.Test;
 
 public class NameUtilTest {
 
 	
 	@Test
 	public void testIsValidOk() {
-		Assert.assertTrue(NameUtil.isValid("sidn.nl."));
-		Assert.assertFalse(NameUtil.isValid("%%%.sidn.nl."));
+		assertTrue(NameUtil.isValid("sidn.nl."));
+		assertFalse(NameUtil.isValid("%%%.sidn.nl."));
 	}
 		
 		
 	@Test
 	public void testExtractDomainLevelOk() {
 		String domainname = NameUtil.domainname("*.nl.");
-		Assert.assertNull(domainname);
+		assertNull(domainname);
 		
 		domainname = NameUtil.domainname("nl");
-		Assert.assertNull(domainname);
+		assertNull(domainname);
 
 		domainname = NameUtil.domainname("sidn.nl.");
-		Assert.assertEquals("sidn.nl", domainname);
-		Assert.assertEquals(2, NameUtil.labels("sidn.nl."));
+		assertEquals("sidn.nl", domainname);
+		assertEquals(2, NameUtil.labels("sidn.nl."));
 
 		domainname = NameUtil.domainname("www.sidn.nl.");
-		Assert.assertEquals("sidn.nl", domainname);
-		Assert.assertEquals(3, NameUtil.labels("www.sidn.nl."));
+		assertEquals("sidn.nl", domainname);
+		assertEquals(3, NameUtil.labels("www.sidn.nl."));
 
 		domainname = NameUtil.domainname("test.www.sidn.nl.");
-		Assert.assertEquals("sidn.nl", domainname);
-		Assert.assertEquals(4, NameUtil.labels("test.www.sidn.nl."));
+		assertEquals("sidn.nl", domainname);
+		assertEquals(4, NameUtil.labels("test.www.sidn.nl."));
 		
 		domainname = NameUtil.domainname("test.blogspot.co.uk.");
-		Assert.assertEquals("blogspot.co.uk", domainname);
-		Assert.assertEquals(4, NameUtil.labels("test.blogspot.co.uk."));
+		assertEquals("blogspot.co.uk", domainname);
+		assertEquals(4, NameUtil.labels("test.blogspot.co.uk."));
 
 		domainname = NameUtil.domainname("www.nzrs.co.nz.");
-		Assert.assertEquals("nzrs.co.nz", domainname);
-		Assert.assertEquals(4, NameUtil.labels("www.nzrs.co.nz."));
+		assertEquals("nzrs.co.nz", domainname);
+		assertEquals(4, NameUtil.labels("www.nzrs.co.nz."));
 
 		domainname = NameUtil.domainname("_gc._tcp.bpw.net.nz.");
-		Assert.assertEquals("bpw.net.nz", domainname);
-		Assert.assertEquals(5, NameUtil.labels("_gc._tcp.bpw.net.nz."));
+		assertEquals("bpw.net.nz", domainname);
+		assertEquals(5, NameUtil.labels("_gc._tcp.bpw.net.nz."));
 
 		domainname = NameUtil.domainname("_gc._tcp.default-first-site-name._sites.bpw.net.nz.");
-		Assert.assertEquals("bpw.net.nz", domainname);
-		Assert.assertEquals(7, NameUtil.labels("_gc._tcp.default-first-site-name._sites.bpw.net.nz."));
+		assertEquals("bpw.net.nz", domainname);
+		assertEquals(7, NameUtil.labels("_gc._tcp.default-first-site-name._sites.bpw.net.nz."));
 	}
 
 	@Test
 	public void testEmailAddress2ndLevelOk() {
 		// email address should not happen, but sometimes we do see these in the qname.
-		Assert.assertNull(NameUtil.domainname("email.test@example.com."));
+		assertNull(NameUtil.domainname("email.test@example.com."));
 	}
 
 	@Test
@@ -81,9 +87,9 @@ public class NameUtilTest {
 		// test fqdn (including final dot)
 		String domainname = NameUtil.domainname("name.example.co.uk.");
 
-		Assert.assertNotNull(domainname);
-		Assert.assertEquals("example.co.uk", domainname);
-		Assert.assertTrue(NameUtil.labels("name.example.co.uk.") == 4);
+		assertNotNull(domainname);
+		assertEquals("example.co.uk", domainname);
+		assertTrue(NameUtil.labels("name.example.co.uk.") == 4);
 
 	}
 
@@ -91,72 +97,72 @@ public class NameUtilTest {
 	public void testInvalidQnameOk() {
 		String domainname = NameUtil.domainname("-sub1.sidn.nl.");
 
-		Assert.assertEquals("sidn.nl", domainname);
-		Assert.assertEquals(3, NameUtil.labels("-sub1.sidn.nl."));
+		assertEquals("sidn.nl", domainname);
+		assertEquals(3, NameUtil.labels("-sub1.sidn.nl."));
 
 		domainname = NameUtil.domainname("test .sidn.nl.");
 
-		Assert.assertEquals("sidn.nl", domainname);
-		Assert.assertEquals(3, NameUtil.labels("test .sidn.nl."));
+		assertEquals("sidn.nl", domainname);
+		assertEquals(3, NameUtil.labels("test .sidn.nl."));
 
 		domainname = NameUtil.domainname("_.anzrad.co.nz.");
-		Assert.assertEquals("anzrad.co.nz", domainname);
-		Assert.assertEquals(4, NameUtil.labels("_.anzrad.co.nz."));
+		assertEquals("anzrad.co.nz", domainname);
+		assertEquals(4, NameUtil.labels("_.anzrad.co.nz."));
 
 		domainname = NameUtil.domainname("r._dns-sd._udp.0x10 0x190x1xp0x190x1ds.ac.nz.");
-		Assert.assertNull(domainname);
-		Assert.assertEquals(6, NameUtil.labels("r._dns-sd._udp.0x10 0x190x1xp0x190x1ds.ac.nz."));
+		assertNull(domainname);
+		assertEquals(6, NameUtil.labels("r._dns-sd._udp.0x10 0x190x1xp0x190x1ds.ac.nz."));
 
 		domainname = NameUtil.domainname("https.aklc-guest.govt.nz.");
-		Assert.assertEquals("aklc-guest.govt.nz", domainname);
-		Assert.assertEquals(4, NameUtil.labels(" https.aklc-guest.govt.nz."));
+		assertEquals("aklc-guest.govt.nz", domainname);
+		assertEquals(4, NameUtil.labels(" https.aklc-guest.govt.nz."));
 
 		domainname = NameUtil.domainname("xxxx.yyyy@lincolnuni.ac.nz.");
-		Assert.assertNull(domainname);
-		Assert.assertEquals(4, NameUtil.labels("xxxx.yyyy@lincolnuni.ac.nz."));
+		assertNull(domainname);
+		assertEquals(4, NameUtil.labels("xxxx.yyyy@lincolnuni.ac.nz."));
 
 		domainname = NameUtil.domainname("_ldap._tcp.dc._msdcs.workgroup.0x1bequ??t?enable.net.nz.");
-		Assert.assertNull(domainname);
-		Assert.assertEquals(8, NameUtil.labels("_ldap._tcp.dc._msdcs.workgroup.0x1bequ??t?enable.net.nz."));
+		assertNull(domainname);
+		assertEquals(8, NameUtil.labels("_ldap._tcp.dc._msdcs.workgroup.0x1bequ??t?enable.net.nz."));
 
 		domainname = NameUtil.domainname("#192.168.51.52.palazzodesign.co.nz.");
-		Assert.assertNull(domainname);
-		Assert.assertEquals(7, NameUtil.labels("#192.168.51.52.palazzodesign.co.nz."));
+		assertNull(domainname);
+		assertEquals(7, NameUtil.labels("#192.168.51.52.palazzodesign.co.nz."));
 	}
 
 	@Test
 	public void testPublicSuffixOk() {
 		String domainname = NameUtil.domainname("nl.");
-		Assert.assertEquals(null, domainname);
-		Assert.assertEquals(1, NameUtil.labels("nl."));
+		assertEquals(null, domainname);
+		assertEquals(1, NameUtil.labels("nl."));
 
 		domainname = NameUtil.domainname(".nl.");
-		Assert.assertEquals(null, domainname);
-		Assert.assertEquals(1, NameUtil.labels(".nl."));
+		assertEquals(null, domainname);
+		assertEquals(1, NameUtil.labels(".nl."));
 
 		domainname = NameUtil.domainname("co.nz.");
-		Assert.assertEquals(null, domainname);
-		Assert.assertEquals(2, NameUtil.labels("co.nz."));
+		assertEquals(null, domainname);
+		assertEquals(2, NameUtil.labels("co.nz."));
 
 		domainname = NameUtil.domainname("ruanca.blogspot.co.nz.");
-		Assert.assertEquals("blogspot.co.nz", domainname);
-		Assert.assertEquals(4, NameUtil.labels("ruanca.blogspot.co.nz."));
+		assertEquals("blogspot.co.nz", domainname);
+		assertEquals(4, NameUtil.labels("ruanca.blogspot.co.nz."));
 	}
 
 	@Test
 	public void testEmptyQnameOk() {
 		String domainname = NameUtil.domainname(".");
 
-		Assert.assertNull(domainname);
-		Assert.assertEquals(0, NameUtil.labels("."));
+		assertNull(domainname);
+		assertEquals(0, NameUtil.labels("."));
 
 		domainname = NameUtil.domainname(null);
-		Assert.assertNull(domainname);
-		Assert.assertEquals(0, NameUtil.labels(null));
+		assertNull(domainname);
+		assertEquals(0, NameUtil.labels(null));
 
 		domainname = NameUtil.domainname("");
-		Assert.assertNull(domainname);
-		Assert.assertEquals(0, NameUtil.labels(""));
+		assertNull(domainname);
+		assertEquals(0, NameUtil.labels(""));
 	}
 
 }

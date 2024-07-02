@@ -21,10 +21,12 @@ package nl.sidnlabs.dnslib.message.records;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-import javax.json.Json;
-import javax.json.JsonObject;
-import javax.json.JsonObjectBuilder;
+
 import com.google.common.net.InetAddresses;
+
+import jakarta.json.Json;
+import jakarta.json.JsonObject;
+import jakarta.json.JsonObjectBuilder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;

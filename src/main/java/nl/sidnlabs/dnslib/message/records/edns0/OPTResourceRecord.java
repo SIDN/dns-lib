@@ -21,9 +21,10 @@ package nl.sidnlabs.dnslib.message.records.edns0;
 
 import java.util.ArrayList;
 import java.util.List;
-import javax.json.Json;
-import javax.json.JsonObject;
-import javax.json.JsonObjectBuilder;
+
+import jakarta.json.Json;
+import jakarta.json.JsonObject;
+import jakarta.json.JsonObjectBuilder;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.log4j.Log4j2;
@@ -48,9 +49,6 @@ public class OPTResourceRecord extends AbstractResourceRecord {
   private static final long serialVersionUID = 1L;
 
   private static final char DNSSEC_DO_BIT_MASK = 0x8000; // 1000 0000 0000 0000
-
-  private static final int POWERDNS_EDNSPING_UDPSIZE = 1200;
-  private static final int POWERDNS_EDNSPING_LENGTH = 4;
 
   private char udpPlayloadSize = 4096;
 

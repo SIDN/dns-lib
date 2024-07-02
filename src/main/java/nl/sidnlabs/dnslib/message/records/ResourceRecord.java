@@ -19,7 +19,7 @@
  */
 package nl.sidnlabs.dnslib.message.records;
 
-import javax.json.JsonObject;
+import jakarta.json.JsonObject;
 import nl.sidnlabs.dnslib.message.util.NetworkData;
 import nl.sidnlabs.dnslib.types.ResourceRecordClass;
 import nl.sidnlabs.dnslib.types.ResourceRecordType;

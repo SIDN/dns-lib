@@ -21,10 +21,12 @@
 package nl.sidnlabs.dnslib.message.records.dnssec;
 
 import java.security.PublicKey;
-import javax.json.Json;
-import javax.json.JsonObject;
-import javax.json.JsonObjectBuilder;
+
 import org.apache.commons.codec.binary.Base64;
+
+import jakarta.json.Json;
+import jakarta.json.JsonObject;
+import jakarta.json.JsonObjectBuilder;
 import lombok.Getter;
 import lombok.Setter;
 import nl.sidnlabs.dnslib.message.records.AbstractResourceRecord;

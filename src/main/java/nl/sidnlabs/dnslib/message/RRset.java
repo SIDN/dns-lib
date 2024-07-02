@@ -22,9 +22,10 @@ package nl.sidnlabs.dnslib.message;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-import javax.json.Json;
-import javax.json.JsonArray;
-import javax.json.JsonArrayBuilder;
+
+import jakarta.json.Json;
+import jakarta.json.JsonArray;
+import jakarta.json.JsonArrayBuilder;
 import lombok.Getter;
 import lombok.Setter;
 import nl.sidnlabs.dnslib.message.records.ResourceRecord;

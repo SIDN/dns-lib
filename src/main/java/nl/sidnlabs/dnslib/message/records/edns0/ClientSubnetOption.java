@@ -21,6 +21,7 @@ package nl.sidnlabs.dnslib.message.records.edns0;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+
 import lombok.Getter;
 import lombok.Setter;
 import nl.sidnlabs.dnslib.exception.DnsDecodeException;

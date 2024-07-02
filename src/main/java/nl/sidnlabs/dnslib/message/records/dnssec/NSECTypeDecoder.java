@@ -20,6 +20,7 @@
 package nl.sidnlabs.dnslib.message.records.dnssec;
 
 import java.util.List;
+
 import nl.sidnlabs.dnslib.message.util.NetworkData;
 import nl.sidnlabs.dnslib.types.ResourceRecordType;
 import nl.sidnlabs.dnslib.types.TypeMap;
