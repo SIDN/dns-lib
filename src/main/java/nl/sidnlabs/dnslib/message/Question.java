@@ -19,8 +19,6 @@
  */
 package nl.sidnlabs.dnslib.message;
 
-import org.apache.commons.lang3.StringUtils;
-
 import jakarta.json.Json;
 import jakarta.json.JsonObject;
 import lombok.Getter;
@@ -50,9 +48,7 @@ public class Question {
 
   public void decode(NetworkData buffer) {
 
-    String qname = DNSStringUtil.readNameUsingBuffer(buffer);
-    // prevent NPs by setting qname to empty string
-    setQName(qname != null ? StringUtils.lowerCase(qname) : "");
+    setQName(DNSStringUtil.readNameUsingBuffer(buffer));
 
     qTypeValue = buffer.readUnsignedChar();
     setQType(ResourceRecordType.fromValue(qTypeValue));

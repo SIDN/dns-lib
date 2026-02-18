@@ -24,6 +24,7 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import org.apache.commons.lang3.StringUtils;
+
 import nl.sidnlabs.dnslib.exception.DnsDecodeException;
 import nl.sidnlabs.dnslib.exception.DnsEncodeException;
 
@@ -54,7 +55,6 @@ public class DNSStringUtil {
   private static final int MAX_LABELS = 127;
 
   private static final int MAX_POINTER_CHAIN_LENGTH = 10; // TODO: what is the optimal value?
-
 
   private static final byte DEC_DOT_CHAR_LABEL_SEP = 46;
 
@@ -94,92 +94,92 @@ public class DNSStringUtil {
    * 
    */
 
-  private static final byte UNCOMPRESSED_NAME_BIT_MASK = (byte) 0x3f; // 0011 1111
+  //private static final byte UNCOMPRESSED_NAME_BIT_MASK = (byte) 0x3f; // 0011 1111
   private static final byte COMPRESSED_NAME_BIT_MASK = (byte) 0xc0; // 1100 0000
 
 
-  public static boolean isUncompressedName(byte namePrefix) {
-    return (namePrefix | UNCOMPRESSED_NAME_BIT_MASK) == UNCOMPRESSED_NAME_BIT_MASK;
-  }
+  // public static boolean isUncompressedName(byte namePrefix) {
+  //   return (namePrefix | UNCOMPRESSED_NAME_BIT_MASK) == UNCOMPRESSED_NAME_BIT_MASK;
+  // }
 
-  public static boolean isCompressedName(byte namePrefix) {
-    return (namePrefix & COMPRESSED_NAME_BIT_MASK) == COMPRESSED_NAME_BIT_MASK;
-  }
+  // public static boolean isCompressedName(byte namePrefix) {
+  //   return (namePrefix & COMPRESSED_NAME_BIT_MASK) == COMPRESSED_NAME_BIT_MASK;
+  // }
 
-  public static String readName(NetworkData buffer) {
-    int currentPosition = -1;
-    StringBuilder nameBuilder = new StringBuilder();
+  // public static String readName(NetworkData buffer) {
+  //   int currentPosition = -1;
+  //   StringBuilder nameBuilder = new StringBuilder();
 
-    short length = buffer.readUnsignedByte();
+  //   short length = buffer.readUnsignedByte();
 
-    if (length == 0) {
-      /* zero length label means "." root */
-      return ".";
-    }
+  //   if (length == 0) {
+  //     /* zero length label means "." root */
+  //     return ".";
+  //   }
 
-    // keep track of the total length of the name
-    // prevent creating huge name and and getting OOM exception
-    int totalLength = 0;
-    int totalLabels = 0;
-    // keep reading labels until zero length (end of string) is reached
-    while (length > 0) {
+  //   // keep track of the total length of the name
+  //   // prevent creating huge name and and getting OOM exception
+  //   int totalLength = 0;
+  //   int totalLabels = 0;
+  //   // keep reading labels until zero length (end of string) is reached
+  //   while (length > 0) {
 
-      if (totalLabels == MAX_LABELS) {
-        // too many labels used, stop now to prevent possible infinite loop
-        throw new DnsEncodeException(
-            "Too many labels (max 127) for name: " + nameBuilder.toString());
-      }
+  //     if (totalLabels == MAX_LABELS) {
+  //       // too many labels used, stop now to prevent possible infinite loop
+  //       throw new DnsEncodeException(
+  //           "Too many labels (max 127) for name: " + nameBuilder.toString());
+  //     }
 
-      if (totalLength > MAX_CHARACTER_STRING_LENGTH) {
-        // protection against OOM
-        throw new DnsEncodeException(
-            "total name length length exceeding max (253) for name: " + nameBuilder.toString());
-      }
+  //     if (totalLength > MAX_CHARACTER_STRING_LENGTH) {
+  //       // protection against OOM
+  //       throw new DnsEncodeException(
+  //           "total name length length exceeding max (253) for name: " + nameBuilder.toString());
+  //     }
 
-      if (isUncompressedName((byte) length)) {
+  //     if (isUncompressedName((byte) length)) {
 
-        if (length > MAX_LABEL_LENGTH) {
-          throw new DnsDecodeException("Unsupported label length found, value: " + (int) length);
-        }
+  //       if (length > MAX_LABEL_LENGTH) {
+  //         throw new DnsDecodeException("Unsupported label length found, value: " + (int) length);
+  //       }
 
-        byte[] bytes = new byte[length];
-        buffer.readBytes(bytes);
-        String label = new String(bytes, StandardCharsets.US_ASCII);
+  //       byte[] bytes = new byte[length];
+  //       buffer.readBytes(bytes);
+  //       String label = new String(bytes, StandardCharsets.US_ASCII);
 
-        nameBuilder.append(label);
-        nameBuilder.append(".");
-        // add label len + dot to total length
-        totalLength = totalLength + label.length() + 1;
-        totalLabels++;
+  //       nameBuilder.append(label);
+  //       nameBuilder.append(".");
+  //       // add label len + dot to total length
+  //       totalLength = totalLength + label.length() + 1;
+  //       totalLabels++;
 
-      } else if (isCompressedName((byte) length)) {
-        // save location in the stream (after reading the 2 (offset) bytes)
-        if (currentPosition == -1) {
-          // only save first pointer location, there may be multiple
-          // pointers forming a chain
-          //
-          currentPosition = buffer.getReaderIndex();
-        }
-        // follow 1 or more pointers to the data label.
-        followPointerChain(buffer);
-      } else {
-        throw new DnsDecodeException("Unsupported label type found");
-      }
+  //     } else if (isCompressedName((byte) length)) {
+  //       // save location in the stream (after reading the 2 (offset) bytes)
+  //       if (currentPosition == -1) {
+  //         // only save first pointer location, there may be multiple
+  //         // pointers forming a chain
+  //         //
+  //         currentPosition = buffer.getReaderIndex();
+  //       }
+  //       // follow 1 or more pointers to the data label.
+  //       followPointerChain(buffer);
+  //     } else {
+  //       throw new DnsDecodeException("Unsupported label type found");
+  //     }
 
-      length = buffer.readUnsignedByte();
-    }
+  //     length = buffer.readUnsignedByte();
+  //   }
 
-    // set index position to the first byte after the first pointer (16 bytes)
-    if (currentPosition >= 0) {
-      buffer.setReaderIndex(currentPosition + 1);
-    }
+  //   // set index position to the first byte after the first pointer (16 bytes)
+  //   if (currentPosition >= 0) {
+  //     buffer.setReaderIndex(currentPosition + 1);
+  //   }
 
-    return nameBuilder.toString();
-  }
+  //   return nameBuilder.toString();
+  // }
 
-  private static String bytesToString(byte[] data, int length) {
-    return new String(data, 0, length, StandardCharsets.US_ASCII);
-  }
+  // private static String bytesToString(byte[] data, int length) {
+  //   return new String(data, 0, length, StandardCharsets.US_ASCII);
+  // }
 
 
   /**
@@ -197,9 +197,9 @@ public class DNSStringUtil {
 
   }
 
-  public static String readNameUsingBuffer(NetworkData buffer, byte[] stringBuffer) {
+  private static String readNameUsingBuffer(NetworkData buffer, byte[] stringBuffer) {
     int currentPosition = -1;
-    short length = buffer.readUnsignedByte();
+    int length = buffer.readUnsignedByte();
 
     if (length == 0) {
       /* zero length label means "." root */
@@ -208,9 +208,6 @@ public class DNSStringUtil {
 
     // keep track of position in dst buffer
     int bufferIndex = 0;
-    // keep track of the total length of the name
-    // prevent creating huge name and and getting OOM exception
-    int totalLength = 0;
     int totalLabels = 0;
     // keep reading labels until zero length (end of string) is reached
     while (length > 0) {
@@ -218,28 +215,28 @@ public class DNSStringUtil {
       if (totalLabels == MAX_LABELS) {
         // too many labels used, stop now to prevent possible infinite loop
         throw new DnsEncodeException(
-            "Too many labels (max 127) for name: " + bytesToString(stringBuffer, bufferIndex));
+            "Too many labels (max 127) for name: " + toLowerCaseAsciiInPlace(stringBuffer, 0, bufferIndex));
       }
 
-      if (totalLength > MAX_CHARACTER_STRING_LENGTH) {
+      if (bufferIndex > MAX_CHARACTER_STRING_LENGTH) {
         // protection against OOM
         throw new DnsEncodeException("total name length length exceeding max (253) for name: "
-            + bytesToString(stringBuffer, bufferIndex));
+            + toLowerCaseAsciiInPlace(stringBuffer, 0, bufferIndex));
       }
 
-      if (isUncompressedName((byte) length)) {
+      // inline bit check: uncompressed if top 2 bits are 00 (i.e., (length & 0xC0) == 0)
+      if (((byte) length & COMPRESSED_NAME_BIT_MASK) == 0) {
 
         if (length > MAX_LABEL_LENGTH) {
-          throw new DnsDecodeException("Unsupported label length found, value: " + (int) length);
+          throw new DnsDecodeException("Unsupported label length found, value: " + length);
         }
 
         buffer.readBytes(stringBuffer, bufferIndex, length);
         bufferIndex += length;
         stringBuffer[bufferIndex++] = DEC_DOT_CHAR_LABEL_SEP;
-        totalLength += length + 1;
         totalLabels++;
 
-      } else if (isCompressedName((byte) length)) {
+      } else if (((byte) length & COMPRESSED_NAME_BIT_MASK) == COMPRESSED_NAME_BIT_MASK) {
         // save location in the stream (after reading the 2 (offset) bytes)
         if (currentPosition == -1) {
           // only save first pointer location, there may be multiple
@@ -261,7 +258,8 @@ public class DNSStringUtil {
       buffer.setReaderIndex(currentPosition + 1);
     }
 
-    return bytesToString(stringBuffer, bufferIndex);
+    //return bytesToString(stringBuffer, bufferIndex);
+    return toLowerCaseAsciiInPlace(stringBuffer, 0, bufferIndex);
   }
 
   /**
@@ -272,7 +270,7 @@ public class DNSStringUtil {
    * @param buffer bytes with DNS message
    */
   private static void followPointerChain(NetworkData buffer) {
-    short length = 0;
+    int length = 0;
     // protected against infinite loop (attack)
     int jumps = 0;
     do {
@@ -304,7 +302,7 @@ public class DNSStringUtil {
       buffer.setReaderIndex(offset, true);
       // check for next pointre in case of pointer chaining
       length = buffer.readUnsignedByte();
-    } while (isCompressedName((byte) length));
+    } while (((byte) length & COMPRESSED_NAME_BIT_MASK) == COMPRESSED_NAME_BIT_MASK);
 
 
     // go 1 byte because we read the length of the next label already
@@ -378,6 +376,60 @@ public class DNSStringUtil {
       buffer.writeByte(data.length);
       buffer.writeBytes(data);
     }
+  }
+
+  /**
+   * Efficiently converts ASCII string to lowercase.
+   * This method is optimized for DNS domain names and only handles ASCII characters.
+   * Characters A-Z (65-90) are converted to a-z (97-122), all other characters remain unchanged.
+   * This is faster than String.toLowerCase() as it avoids locale handling and String object creation
+   * until the final result.
+   * 
+   * @param input the ASCII string to convert to lowercase
+   * @return lowercase version of the input string
+   */
+  public static String toLowerCaseAscii(String input) {
+    if (input == null || input.isEmpty()) {
+      return input;
+    }
+
+    byte[] bytes = input.getBytes(StandardCharsets.US_ASCII);
+    boolean changed = false;
+
+    for (int i = 0; i < bytes.length; i++) {
+      byte b = bytes[i];
+      // Check if byte is an uppercase ASCII letter (A-Z: 65-90)
+      if (b >= 65 && b <= 90) {
+        bytes[i] = (byte) (b + 32); // Convert to lowercase (a-z: 97-122)
+        changed = true;
+      }
+    }
+
+    // Only create new string if changes were made, otherwise return original
+    return changed ? new String(bytes, StandardCharsets.US_ASCII) : input;
+  }
+
+  /**
+   * Efficiently converts ASCII byte array to lowercase in place.
+   * This method modifies the input array directly for maximum performance.
+   * Characters A-Z (65-90) are converted to a-z (97-122).
+   * 
+   * @param bytes the byte array to convert to lowercase (modified in place)
+   * @param offset starting offset in the array
+   * @param length number of bytes to process
+   */
+  public static String toLowerCaseAsciiInPlace(byte[] bytes, int offset, int length) {
+    int end = offset + length;
+  
+    for (int i = offset; i < end; i++) {
+      byte b = bytes[i];
+      // Check if byte is an uppercase ASCII letter (A-Z: 65-90)
+      if (b >= 65 && b <= 90) {
+        bytes[i] = (byte) (b + 32); // Convert to lowercase (a-z: 97-122)
+      }
+    }
+
+    return new String(bytes, offset, length, StandardCharsets.US_ASCII);
   }
 
 }

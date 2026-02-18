@@ -36,7 +36,6 @@ import nl.sidnlabs.dnslib.message.util.NetworkData;
 import nl.sidnlabs.dnslib.types.AlgorithmType;
 import nl.sidnlabs.dnslib.types.ResourceRecordType;
 import nl.sidnlabs.dnslib.types.TypeMap;
-import nl.sidnlabs.dnslib.util.LabelUtil;
 
 @Getter
 @Setter
@@ -95,8 +94,6 @@ public class RRSIGResourceRecord extends AbstractResourceRecord {
       algorithm = AlgorithmType.fromValue(alg);
 
       labels = buffer.readUnsignedByte();
-      // check if wildacrd was used
-      wildcard = LabelUtil.count(getName()) > labels;
 
       originalTtl = buffer.readUnsignedInt();
 
@@ -200,9 +197,4 @@ public class RRSIGResourceRecord extends AbstractResourceRecord {
                     new Base64(Integer.MAX_VALUE, "".getBytes()).encodeAsString(signature)))
         .build();
   }
-
-  public boolean getWildcard() {
-    return wildcard;
-  }
-
 }

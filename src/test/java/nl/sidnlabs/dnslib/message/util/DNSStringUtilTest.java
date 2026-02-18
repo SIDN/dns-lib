@@ -54,28 +54,28 @@ public class DNSStringUtilTest {
       0, 0, -128, 0, 0, 0};
 
 
-  @Test
-  public void readName() {
+  // @Test
+  // public void readName() {
 
-    NetworkData buffer = new NetworkData(COMPRESSED_NAME);
-    // go to a compressed name and try to read it
-    buffer.setReaderIndex(92);
-    String name = DNSStringUtil.readName(buffer);
-    assertEquals("dns2.123hjemmeside.dk.", name);
-  }
+  //   NetworkData buffer = new NetworkData(COMPRESSED_NAME);
+  //   // go to a compressed name and try to read it
+  //   buffer.setReaderIndex(92);
+  //   String name = DNSStringUtil.readName(buffer);
+  //   assertEquals("dns2.123hjemmeside.dk.", name);
+  // }
 
-  @Test
-  public void readNamePerf() {
-    long start = System.currentTimeMillis();
+  // @Test
+  // public void readNamePerf() {
+  //   long start = System.currentTimeMillis();
 
-    NetworkData buffer = new NetworkData(COMPRESSED_NAME);
-    for (int i = 0; i < 1000000; i++) {
-      buffer.setReaderIndex(92);
-      DNSStringUtil.readName(buffer);
-    }
+  //   NetworkData buffer = new NetworkData(COMPRESSED_NAME);
+  //   for (int i = 0; i < 1000000; i++) {
+  //     buffer.setReaderIndex(92);
+  //     DNSStringUtil.readName(buffer);
+  //   }
 
-    System.out.println("Time: " + (System.currentTimeMillis() - start));
-  }
+  //   System.out.println("Time: " + (System.currentTimeMillis() - start));
+  // }
 
   @Test
   public void readNameBufferedPerf() {

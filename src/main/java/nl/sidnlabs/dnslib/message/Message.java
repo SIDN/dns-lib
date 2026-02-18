@@ -20,7 +20,10 @@
 package nl.sidnlabs.dnslib.message;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import jakarta.json.Json;
 import jakarta.json.JsonArrayBuilder;
@@ -35,6 +38,7 @@ import nl.sidnlabs.dnslib.message.records.edns0.OPTResourceRecord;
 import nl.sidnlabs.dnslib.message.util.DNSStringUtil;
 import nl.sidnlabs.dnslib.message.util.NetworkData;
 import nl.sidnlabs.dnslib.types.OpcodeType;
+import nl.sidnlabs.dnslib.types.ResourceRecordClass;
 import nl.sidnlabs.dnslib.types.ResourceRecordType;
 
 @Log4j2
@@ -49,12 +53,47 @@ public class Message {
   private int bytes;
   private Header header;
 
-  private List<Question> questions = new ArrayList<>();
-  private List<RRset> answer = new ArrayList<>();
-  private List<RRset> authority = new ArrayList<>();
-  private List<RRset> additional = new ArrayList<>();
+  // Lazy initialization for better performance
+  private List<Question> questions;
+  private List<RRset> answer;
+  private List<RRset> authority;
+  private List<RRset> additional;
+
+  // Cache for O(1) RRset lookup instead of O(n) linear search
+  private Map<RRsetKey, RRset> answerMap;
+  private Map<RRsetKey, RRset> authorityMap;
+  private Map<RRsetKey, RRset> additionalMap;
 
   private OPTResourceRecord pseudo;
+
+  // Inner class for composite key in RRset lookup
+  private static class RRsetKey {
+    final String name;
+    final ResourceRecordClass classz;
+    final ResourceRecordType type;
+    final int hashCode;
+
+    RRsetKey(String name, ResourceRecordClass classz, ResourceRecordType type) {
+      this.name = name.toLowerCase(); // case-insensitive
+      this.classz = classz;
+      this.type = type;
+      // Pre-compute hash
+      this.hashCode = 31 * (31 * this.name.hashCode() + classz.hashCode()) + type.hashCode();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+      if (this == o) return true;
+      if (!(o instanceof RRsetKey)) return false;
+      RRsetKey key = (RRsetKey) o;
+      return classz == key.classz && type == key.type && name.equals(key.name);
+    }
+
+    @Override
+    public int hashCode() {
+      return hashCode;
+    }
+  }
 
   public Message() {}
 
@@ -94,63 +133,103 @@ public class Message {
     return header;
   }
 
+  public List<Question> getQuestions() {
+    return questions == null ? Collections.emptyList() : questions;
+  }
+
+  public List<RRset> getAnswer() {
+    return answer == null ? Collections.emptyList() : answer;
+  }
+
+  public List<RRset> getAuthority() {
+    return authority == null ? Collections.emptyList() : authority;
+  }
+
   public Message addQuestion(Question question) {
+    ensureQuestionsInitialized(1);
     this.questions.add(question);
     return this;
   }
 
-  private RRset findRRset(List<RRset> setList, ResourceRecord rr) {
-    for (RRset rrset : setList) {
-      if (rrset.getOwner().equalsIgnoreCase(rr.getName()) && rrset.getClassz() == rr.getClassz()
-          && rrset.getType() == rr.getType()) {
-        return rrset;
-      }
-    }
-
-    return null;
+  private RRsetKey createKey(ResourceRecord rr) {
+    return new RRsetKey(rr.getName(), rr.getClassz(), rr.getType());
   }
 
-  private RRset createRRset(List<RRset> setList, ResourceRecord rr) {
-    RRset rrset = RRset.createAs(rr);
-    setList.add(rrset);
-    return rrset;
+  private void ensureAnswerInitialized(int capacity) {
+    if (answer == null) {
+      answer = new ArrayList<>(capacity);
+      answerMap = new HashMap<>(capacity);
+    }
+  }
+
+  private void ensureAuthorityInitialized(int capacity) {
+    if (authority == null) {
+      authority = new ArrayList<>(capacity);
+      authorityMap = new HashMap<>(capacity);
+    }
+  }
+
+  private void ensureAdditionalInitialized(int capacity) {
+    if (additional == null) {
+      additional = new ArrayList<>(capacity);
+      additionalMap = new HashMap<>(capacity);
+    }
+  }
+
+  private void ensureQuestionsInitialized(int capacity) {
+    if (questions == null) {
+      questions = new ArrayList<>(capacity);
+    }
   }
 
   public void addAnswer(ResourceRecord answer) {
-    RRset rrset = findRRset(this.answer, answer);
+    ensureAnswerInitialized(4);
+    RRsetKey key = createKey(answer);
+    RRset rrset = answerMap.get(key);
     if (rrset == null) {
-      rrset = createRRset(this.answer, answer);
+      rrset = RRset.createAs(answer);
+      this.answer.add(rrset);
+      answerMap.put(key, rrset);
     } else {
       rrset.add(answer);
     }
   }
 
   public void addAnswer(RRset rrset) {
+    ensureAnswerInitialized(4);
     answer.add(rrset);
   }
 
   public void addAuthority(ResourceRecord authority) {
-    RRset rrset = findRRset(this.authority, authority);
+    ensureAuthorityInitialized(4);
+    RRsetKey key = createKey(authority);
+    RRset rrset = authorityMap.get(key);
     if (rrset == null) {
-      rrset = createRRset(this.authority, authority);
+      rrset = RRset.createAs(authority);
+      this.authority.add(rrset);
+      authorityMap.put(key, rrset);
     } else {
       rrset.add(authority);
     }
   }
 
   public void addAuthority(RRset authority) {
+    ensureAuthorityInitialized(4);
     this.authority.add(authority);
-
   }
 
   public List<RRset> getAdditional() {
-    return additional;
+    return additional == null ? Collections.emptyList() : additional;
   }
 
   public void addAdditional(ResourceRecord rr) {
-    RRset rrset = findRRset(this.additional, rr);
+    ensureAdditionalInitialized(4);
+    RRsetKey key = createKey(rr);
+    RRset rrset = additionalMap.get(key);
     if (rrset == null) {
-      rrset = createRRset(this.additional, rr);
+      rrset = RRset.createAs(rr);
+      this.additional.add(rrset);
+      additionalMap.put(key, rrset);
     } else {
       rrset.add(rr);
     }
@@ -158,6 +237,7 @@ public class Message {
 
   public void addAdditional(RRset additional) {
     if (additional.getType() != ResourceRecordType.OPT) {
+      ensureAdditionalInitialized(4);
       this.additional.add(additional);
     }
   }
@@ -175,42 +255,66 @@ public class Message {
       return;
     }
 
+    // Cache header counts to avoid repeated method calls
+    final int qdCount = header.getQdCount();
+    final int anCount = header.getAnCount();
+    final int nsCount = header.getNsCount();
+    final int arCount = header.getArCount();
 
-    for (int i = 0; i < header.getQdCount(); i++) {
-      Question question = decodeQuestion(buffer);
-      addQuestion(question);
+    // Pre-initialize lists with known capacities
+    if (qdCount > 0) {
+      ensureQuestionsInitialized(qdCount);
+      for (int i = 0; i < qdCount; i++) {
+        Question question = decodeQuestion(buffer);
+        questions.add(question);
+      }
     }
 
-    for (int i = 0; i < header.getAnCount(); i++) {
-      ResourceRecord rr = decodeResourceRecord(buffer);
-      if (!partial) {
+    if (!partial && anCount > 0) {
+      ensureAnswerInitialized(anCount);
+      for (int i = 0; i < anCount; i++) {
+        ResourceRecord rr = decodeResourceRecord(buffer, false);
         addAnswer(rr);
       }
+    } else if (partial) {
+      // Skip answer section in partial mode
+      for (int i = 0; i < nsCount; i++) {
+        decodeResourceRecord(buffer, true);
+      }
     }
 
-    for (int i = 0; i < header.getNsCount(); i++) {
-      ResourceRecord rr = decodeResourceRecord(buffer);
-      if (!partial) {
+    if (!partial && nsCount > 0) {
+      ensureAuthorityInitialized(nsCount);
+      for (int i = 0; i < nsCount; i++) {
+        ResourceRecord rr = decodeResourceRecord(buffer, false);
         addAuthority(rr);
       }
-    }
-
-    // because in partial decode mode we do want the OPT record the check
-    // for the addition records is done in the decodeResourceRecord method
-    for (int i = 0; i < header.getArCount(); i++) {
-      ResourceRecord rr = decodeResourceRecord(buffer);
-      if (rr != null && rr.getType() != ResourceRecordType.OPT) {
-        if (!partial) {
-          addAdditional(rr);
-        }
-      } else {
-        pseudo = (OPTResourceRecord) (rr);
+    } else if (partial) {
+      // Skip authority section in partial mode
+      for (int i = 0; i < arCount; i++) {
+        decodeResourceRecord(buffer, true);
       }
     }
 
+    // In partial mode, we still want the OPT record
+    if (arCount > 0) {
+      if (!partial) {
+        ensureAdditionalInitialized(arCount);
+      }
+      for (int i = 0; i < arCount; i++) {
+        ResourceRecord rr = decodeResourceRecord(buffer, partial);
+        if (rr != null) {
+          if (rr.getType() == ResourceRecordType.OPT) {
+            pseudo = (OPTResourceRecord) rr;
+          } else if (!partial) {
+            addAdditional(rr);
+          }
+        }
+      }
+    }
   }
 
-  private ResourceRecord decodeResourceRecord(NetworkData buffer) {
+  private ResourceRecord decodeResourceRecord(NetworkData buffer, boolean partialDecode) {
 
     /*
      * read ahead to the type bytes to find out what type of RR needs to be created.
@@ -229,16 +333,18 @@ public class Message {
 
     ResourceRecord rr = ResourceRecordFactory.getInstance().createResourceRecord(type);
 
-    if (partial) {
+    if (partialDecode) {
       // only decode the opt record when doing partial decoding
       if (rr.getType() == ResourceRecordType.OPT) {
-        rr.decode(buffer, partial);
+        rr.decode(buffer, true);
+        return rr;
       }
-      return rr;
+      // For other types in partial mode, just skip over them
+      return null;
     }
 
     // decode the entire rr now
-    rr.decode(buffer, partial);
+    rr.decode(buffer, false);
     return rr;
   }
 
@@ -254,61 +360,76 @@ public class Message {
 
   @Override
   public String toString() {
-    StringBuilder builder = new StringBuilder();
+    // Pre-size StringBuilder to reduce allocations
+    StringBuilder builder = new StringBuilder(512);
     builder.append("\nheader\n");
     builder.append("_______________________________________________\n");
-    builder.append("Message [header=" + header + "] ");
+    builder.append("Message [header=").append(header).append("] ");
     builder.append("\n");
 
     builder.append("question\n");
     builder.append("_______________________________________________\n");
-    for (Question question : questions) {
-      builder.append(question.toString());
-      builder.append("\n");
+    if (questions != null) {
+      for (Question question : questions) {
+        builder.append(question.toString());
+        builder.append("\n");
+      }
     }
 
     builder.append("answer\n");
     builder.append("_______________________________________________\n");
-    for (RRset rrset : answer) {
-      builder.append(rrset.toString());
-      builder.append("\n");
+    if (answer != null) {
+      for (RRset rrset : answer) {
+        builder.append(rrset.toString());
+        builder.append("\n");
+      }
     }
 
     builder.append("authority\n");
     builder.append("_______________________________________________\n");
-    for (RRset rrset : authority) {
-      builder.append(rrset.toString());
-      builder.append("\n");
+    if (authority != null) {
+      for (RRset rrset : authority) {
+        builder.append(rrset.toString());
+        builder.append("\n");
+      }
     }
 
     builder.append("additional\n");
     builder.append("_______________________________________________\n");
-    for (RRset rrset : additional) {
-      builder.append(rrset.toString());
-      builder.append("\n");
+    if (additional != null) {
+      for (RRset rrset : additional) {
+        builder.append(rrset.toString());
+        builder.append("\n");
+      }
     }
 
     return builder.toString();
   }
 
   public Object toZone() {
-    StringBuilder builder = new StringBuilder();
-    builder.append("; header: " + header.toZone() + "\n");
+    StringBuilder builder = new StringBuilder(512);
+    builder.append("; header: ").append(header.toZone()).append("\n");
 
     int maxLength = maxLength();
     builder.append("; answer section:\n");
-    for (RRset rrset : answer) {
-      builder.append(rrset.toZone(maxLength));
+    if (answer != null) {
+      for (RRset rrset : answer) {
+        builder.append(rrset.toZone(maxLength));
+      }
     }
 
     builder.append("; authority section:\n");
-    for (RRset rrset : authority) {
-      builder.append(rrset.toZone(maxLength));
+    if (authority != null) {
+      for (RRset rrset : authority) {
+        builder.append(rrset.toZone(maxLength));
+      }
     }
 
     builder.append("; additional section:\n");
-    for (RRset rrset : additional) {
-      builder.append(rrset.toZone(maxLength));
+    if (additional != null) {
+      for (RRset rrset : additional) {
+        builder.append(rrset.toZone(maxLength));
+      }
     }
 
     return builder.toString();
@@ -319,27 +440,34 @@ public class Message {
     builder.add("header", header.toJSon());
 
     JsonArrayBuilder questionsBuilder = Json.createArrayBuilder();
-    for (Question question : questions) {
-      questionsBuilder.add(question.toJSon());
+    if (questions != null) {
+      for (Question question : questions) {
+        questionsBuilder.add(question.toJSon());
+      }
     }
-
     builder.add("question", questionsBuilder.build());
 
     JsonArrayBuilder rrBuilder = Json.createArrayBuilder();
-    for (RRset rrset : answer) {
-      rrBuilder.add(rrset.toJSon());
+    if (answer != null) {
+      for (RRset rrset : answer) {
+        rrBuilder.add(rrset.toJSon());
+      }
     }
     builder.add("answer", rrBuilder.build());
 
     rrBuilder = Json.createArrayBuilder();
-    for (RRset rrset : authority) {
-      rrBuilder.add(rrset.toJSon());
+    if (authority != null) {
+      for (RRset rrset : authority) {
+        rrBuilder.add(rrset.toJSon());
+      }
     }
     builder.add("authority", rrBuilder.build());
 
     rrBuilder = Json.createArrayBuilder();
-    for (RRset rrset : additional) {
-      rrBuilder.add(rrset.toJSon());
+    if (additional != null) {
+      for (RRset rrset : additional) {
+        rrBuilder.add(rrset.toJSon());
+      }
     }
     builder.add("additional", rrBuilder.build());
 
@@ -349,21 +477,30 @@ public class Message {
   public int maxLength() {
     int length = 0;
 
-    for (RRset rrset : answer) {
-      if (rrset.getOwner().length() > length) {
-        length = rrset.getOwner().length();
+    if (answer != null) {
+      for (RRset rrset : answer) {
+        int ownerLen = rrset.getOwner().length();
+        if (ownerLen > length) {
+          length = ownerLen;
+        }
       }
     }
 
-    for (RRset rrset : authority) {
-      if (rrset.getOwner().length() > length) {
-        length = rrset.getOwner().length();
+    if (authority != null) {
+      for (RRset rrset : authority) {
+        int ownerLen = rrset.getOwner().length();
+        if (ownerLen > length) {
+          length = ownerLen;
+        }
       }
     }
 
-    for (RRset rrset : additional) {
-      if (rrset.getOwner().length() > length) {
-        length = rrset.getOwner().length();
+    if (additional != null) {
+      for (RRset rrset : additional) {
+        int ownerLen = rrset.getOwner().length();
+        if (ownerLen > length) {
+          length = ownerLen;
+        }
       }
     }
 

@@ -99,9 +99,12 @@ public class OPTResourceRecord extends AbstractResourceRecord {
 
   private void loadOptions(NetworkData buffer) {
     if (rdLeng > buffer.bytesAvailable()) {
-      log
-          .error("Incorrect edns rdata size, rdlength=" + (int) rdLeng + " and bytesavail:"
-              + buffer.bytesAvailable());
+    	
+    	if(log.isDebugEnabled()) {
+	      log
+	          .debug("Incorrect edns rdata size, rdlength=" + (int) rdLeng + " and bytesavail:"
+	              + buffer.bytesAvailable());
+    	}
       return;
     }
 

@@ -50,8 +50,8 @@ public abstract class AbstractResourceRecord implements ResourceRecord, Serializ
 
   @Override
   public void decode(NetworkData buffer, boolean partial) {
-    setName(DNSStringUtil.readNameUsingBuffer(buffer));
 
+    setName(DNSStringUtil.readNameUsingBuffer(buffer));
     rawType = buffer.readUnsignedChar();
     setType(ResourceRecordType.fromValue(rawType));
     rawClassz = buffer.readUnsignedChar();
@@ -86,20 +86,6 @@ public abstract class AbstractResourceRecord implements ResourceRecord, Serializ
 
     buffer.writeInt((int) getTtl());
   }
-
-  // protected byte[] readRdata(int rdlength, NetworkData buffer) {
-  //
-  // if (rdlength > buffer.bytesAvailable()) {
-  // // invalid length, ignore
-  // return new byte[0];
-  // }
-  //
-  // buffer.markReaderIndex();
-  // byte[] data = new byte[rdlength];
-  // buffer.readBytes(data);
-  // buffer.resetReaderIndex();
-  // return data;
-  // }
 
   public int getRawType() {
     return (int) rawType;
