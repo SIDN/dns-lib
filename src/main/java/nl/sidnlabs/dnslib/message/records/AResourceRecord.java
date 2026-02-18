@@ -21,7 +21,6 @@ package nl.sidnlabs.dnslib.message.records;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-
 import jakarta.json.Json;
 import jakarta.json.JsonObject;
 import jakarta.json.JsonObjectBuilder;
@@ -43,16 +42,14 @@ public class AResourceRecord extends AbstractResourceRecord {
   public void decode(NetworkData buffer, boolean partial) {
     super.decode(buffer, partial);
 
-    if (!partial && rdLength == 4) {
-      InetAddress ip;
-      byte[] addrBytes = buffer.readBytes(4, 4);
-      try {
-        ip = InetAddress.getByAddress(addrBytes);
-      } catch (UnknownHostException e) {
-        throw new DnsDecodeException("Invalid IP address", e);
-      }
-      setAddress(ip.getHostAddress());
+    InetAddress ip;
+    byte[] addrBytes = buffer.readBytes(4, 4);
+    try {
+      ip = InetAddress.getByAddress(addrBytes);
+    } catch (UnknownHostException e) {
+      throw new DnsDecodeException("Invalid IP address", e);
     }
+    setAddress(ip.getHostAddress());
   }
 
   @Override

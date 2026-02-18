@@ -21,6 +21,7 @@ package nl.sidnlabs.dnslib.message.records.edns0;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.nio.charset.StandardCharsets;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -64,7 +65,7 @@ public class ClientSubnetOption extends EDNS0Option {
 
     if (addrLength > 0) {
 
-      byte[] addrBytes = new byte[0];
+      byte[] addrBytes = null;
 
       // read available ip bytes, can be less than the bytes
       // required for a full ip addr.
@@ -76,12 +77,19 @@ public class ClientSubnetOption extends EDNS0Option {
         addrBytes = buffer.readBytes(16, Math.min(16, addrLength));
       }
 
+      if(addrBytes != null){
+        // use the raw bytes to create a textual representation of the address, this will return posibly 
+        // an invalid address, but this is ok as the client subnet option allows for truncated addresses.
+        address = new String(addrBytes, 0, addrBytes.length, StandardCharsets.US_ASCII);
+      }
+
       try {
-        inetAddress = InetAddress.getByAddress(addrBytes);
+        if(addrBytes != null) {
+          inetAddress = InetAddress.getByAddress(addrBytes);
+        }
       } catch (UnknownHostException e) {
         throw new DnsDecodeException("Invalid IP address", e);
       }
-      address = inetAddress.getHostAddress();
     }
   }
 

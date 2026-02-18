@@ -54,7 +54,7 @@ public class DNSStringUtil {
   private static final int MAX_LABEL_LENGTH = 63;
   private static final int MAX_LABELS = 127;
 
-  private static final int MAX_POINTER_CHAIN_LENGTH = 10; // TODO: what is the optimal value?
+  private static final int MAX_POINTER_CHAIN_LENGTH = 10;
 
   private static final byte DEC_DOT_CHAR_LABEL_SEP = 46;
 
@@ -94,93 +94,7 @@ public class DNSStringUtil {
    * 
    */
 
-  //private static final byte UNCOMPRESSED_NAME_BIT_MASK = (byte) 0x3f; // 0011 1111
   private static final byte COMPRESSED_NAME_BIT_MASK = (byte) 0xc0; // 1100 0000
-
-
-  // public static boolean isUncompressedName(byte namePrefix) {
-  //   return (namePrefix | UNCOMPRESSED_NAME_BIT_MASK) == UNCOMPRESSED_NAME_BIT_MASK;
-  // }
-
-  // public static boolean isCompressedName(byte namePrefix) {
-  //   return (namePrefix & COMPRESSED_NAME_BIT_MASK) == COMPRESSED_NAME_BIT_MASK;
-  // }
-
-  // public static String readName(NetworkData buffer) {
-  //   int currentPosition = -1;
-  //   StringBuilder nameBuilder = new StringBuilder();
-
-  //   short length = buffer.readUnsignedByte();
-
-  //   if (length == 0) {
-  //     /* zero length label means "." root */
-  //     return ".";
-  //   }
-
-  //   // keep track of the total length of the name
-  //   // prevent creating huge name and and getting OOM exception
-  //   int totalLength = 0;
-  //   int totalLabels = 0;
-  //   // keep reading labels until zero length (end of string) is reached
-  //   while (length > 0) {
-
-  //     if (totalLabels == MAX_LABELS) {
-  //       // too many labels used, stop now to prevent possible infinite loop
-  //       throw new DnsEncodeException(
-  //           "Too many labels (max 127) for name: " + nameBuilder.toString());
-  //     }
-
-  //     if (totalLength > MAX_CHARACTER_STRING_LENGTH) {
-  //       // protection against OOM
-  //       throw new DnsEncodeException(
-  //           "total name length length exceeding max (253) for name: " + nameBuilder.toString());
-  //     }
-
-  //     if (isUncompressedName((byte) length)) {
-
-  //       if (length > MAX_LABEL_LENGTH) {
-  //         throw new DnsDecodeException("Unsupported label length found, value: " + (int) length);
-  //       }
-
-  //       byte[] bytes = new byte[length];
-  //       buffer.readBytes(bytes);
-  //       String label = new String(bytes, StandardCharsets.US_ASCII);
-
-  //       nameBuilder.append(label);
-  //       nameBuilder.append(".");
-  //       // add label len + dot to total length
-  //       totalLength = totalLength + label.length() + 1;
-  //       totalLabels++;
-
-  //     } else if (isCompressedName((byte) length)) {
-  //       // save location in the stream (after reading the 2 (offset) bytes)
-  //       if (currentPosition == -1) {
-  //         // only save first pointer location, there may be multiple
-  //         // pointers forming a chain
-  //         //
-  //         currentPosition = buffer.getReaderIndex();
-  //       }
-  //       // follow 1 or more pointers to the data label.
-  //       followPointerChain(buffer);
-  //     } else {
-  //       throw new DnsDecodeException("Unsupported label type found");
-  //     }
-
-  //     length = buffer.readUnsignedByte();
-  //   }
-
-  //   // set index position to the first byte after the first pointer (16 bytes)
-  //   if (currentPosition >= 0) {
-  //     buffer.setReaderIndex(currentPosition + 1);
-  //   }
-
-  //   return nameBuilder.toString();
-  // }
-
-  // private static String bytesToString(byte[] data, int length) {
-  //   return new String(data, 0, length, StandardCharsets.US_ASCII);
-  // }
-
 
   /**
    * Optimized version of the readName method, this version uses a shared buffer to prevent having
@@ -257,8 +171,6 @@ public class DNSStringUtil {
     if (currentPosition >= 0) {
       buffer.setReaderIndex(currentPosition + 1);
     }
-
-    //return bytesToString(stringBuffer, bufferIndex);
     return toLowerCaseAsciiInPlace(stringBuffer, 0, bufferIndex);
   }
 

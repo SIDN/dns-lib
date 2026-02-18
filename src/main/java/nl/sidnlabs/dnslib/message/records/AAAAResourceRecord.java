@@ -21,13 +21,11 @@ package nl.sidnlabs.dnslib.message.records;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-
 import com.google.common.net.InetAddresses;
 
 import jakarta.json.Json;
 import jakarta.json.JsonObject;
 import jakarta.json.JsonObjectBuilder;
-import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import nl.sidnlabs.dnslib.exception.DnsDecodeException;
@@ -35,7 +33,6 @@ import nl.sidnlabs.dnslib.message.util.NetworkData;
 
 @Getter
 @Setter
-@EqualsAndHashCode(callSuper = true)
 public class AAAAResourceRecord extends AbstractResourceRecord {
 
   private static final long serialVersionUID = 1L;
@@ -58,14 +55,14 @@ public class AAAAResourceRecord extends AbstractResourceRecord {
       ipv6Bytes = buffer.readBytes(16, 16);
 
       // create a textual representation of the address
-      InetAddress ipv6Addres;
       try {
-        ipv6Addres = InetAddress.getByAddress(ipv6Bytes);
+        InetAddress ipv6Addres = InetAddress.getByAddress(ipv6Bytes);
+        if (ipv6Addres != null) {
+          setAddress(InetAddresses.toAddrString(ipv6Addres));
+        }
       } catch (UnknownHostException e) {
         throw new DnsDecodeException("Illegal ipv6 address", e);
       }
-
-      setAddress(InetAddresses.toAddrString(ipv6Addres));
     }
   }
 
