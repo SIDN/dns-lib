@@ -113,7 +113,7 @@ public class DNSStringUtil {
 
   private static String readNameUsingBuffer(NetworkData buffer, byte[] stringBuffer) {
     int currentPosition = -1;
-    int length = buffer.readUnsignedByte();
+    short length = buffer.readUnsignedByte();
 
     if (length == 0) {
       /* zero length label means "." root */
@@ -171,6 +171,7 @@ public class DNSStringUtil {
     if (currentPosition >= 0) {
       buffer.setReaderIndex(currentPosition + 1);
     }
+    
     return toLowerCaseAsciiInPlace(stringBuffer, 0, bufferIndex);
   }
 

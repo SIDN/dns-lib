@@ -22,6 +22,7 @@ package nl.sidnlabs.dnslib.message.records;
 import jakarta.json.Json;
 import jakarta.json.JsonObject;
 import jakarta.json.JsonObjectBuilder;
+import java.nio.charset.StandardCharsets;
 import lombok.Getter;
 import lombok.Setter;
 import nl.sidnlabs.dnslib.message.util.NetworkData;
@@ -41,18 +42,20 @@ public class TXTResourceRecord extends AbstractResourceRecord {
     super.decode(buffer, partial);
 
     if (!partial) {
-      // the txt rdata contains <length byte><string bytes>
-      int bytesRead = 0;
+      // read all rdata at once, then process length-prefixed segments
+      byte[] rdata = new byte[rdLength];
+      buffer.readBytes(rdata);
 
-      StringBuilder builder = new StringBuilder();
-      while (bytesRead < rdLength) {
-        int stringLength = buffer.readUnsignedByte();
-        data = new byte[stringLength];
-        buffer.readBytes(data);
-        builder.append(new String(data));
-        bytesRead = bytesRead + stringLength + 1;
+      StringBuilder builder = new StringBuilder(rdLength);
+      int offset = 0;
+      while (offset < rdLength) {
+        int segmentLength = rdata[offset++] & 0xFF;
+        builder.append(new String(rdata, offset, segmentLength, StandardCharsets.US_ASCII));
+        offset += segmentLength;
       }
 
+      // keep last segment bytes available for encode
+      data = rdata;
       value = builder.toString();
     }
   }

@@ -19,6 +19,8 @@
  */
 package nl.sidnlabs.dnslib.message.records.edns0;
 
+import java.nio.charset.StandardCharsets;
+
 import lombok.Getter;
 import lombok.Setter;
 import nl.sidnlabs.dnslib.message.util.NetworkData;
@@ -45,7 +47,7 @@ public class NSidOption extends EDNS0Option {
       // id present in packet
       byte[] iddata = new byte[len];
       buffer.readBytes(iddata);
-      id = new String(iddata);
+      id = new String(iddata, StandardCharsets.US_ASCII);
     }
   }
 

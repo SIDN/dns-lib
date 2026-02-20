@@ -71,7 +71,7 @@ public class DSResourceRecord extends AbstractResourceRecord {
       digest = new byte[rdLength - 4];
       buffer.readBytes(digest);
 
-      hex = new String(Hex.encodeHex(digest));
+      hex = String.valueOf(Hex.encodeHex(digest));
     }
   }
 

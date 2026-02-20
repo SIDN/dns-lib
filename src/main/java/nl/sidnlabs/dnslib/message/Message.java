@@ -278,7 +278,7 @@ public class Message {
       }
     } else if (partial) {
       // Skip answer section in partial mode
-      for (int i = 0; i < nsCount; i++) {
+      for (int i = 0; i < anCount; i++) {
         decodeResourceRecord(buffer, true);
       }
     }
@@ -291,7 +291,7 @@ public class Message {
       }
     } else if (partial) {
       // Skip authority section in partial mode
-      for (int i = 0; i < arCount; i++) {
+      for (int i = 0; i < nsCount; i++) {
         decodeResourceRecord(buffer, true);
       }
     }

@@ -19,6 +19,8 @@
  */
 package nl.sidnlabs.dnslib.message.records;
 
+import java.nio.charset.StandardCharsets;
+
 import jakarta.json.Json;
 import jakarta.json.JsonObject;
 import jakarta.json.JsonObjectBuilder;
@@ -44,7 +46,7 @@ public class URIResourceRecord extends AbstractResourceRecord {
       weight = buffer.readUnsignedChar();
       byte[] uriBytes = new byte[rdLength - 4];
       buffer.readBytes(uriBytes);
-      uri = new String(uriBytes);
+      uri = new String(uriBytes, StandardCharsets.US_ASCII);
     }
   }
 
