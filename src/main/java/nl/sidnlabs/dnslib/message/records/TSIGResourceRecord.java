@@ -19,7 +19,6 @@
  */
 package nl.sidnlabs.dnslib.message.records;
 
-import jakarta.json.JsonObject;
 import lombok.Getter;
 import lombok.Setter;
 import nl.sidnlabs.dnslib.message.util.NetworkData;
@@ -33,11 +32,6 @@ public class TSIGResourceRecord extends AbstractResourceRecord {
   @Override
   public void decode(NetworkData buffer, boolean partial) {
     super.decode(buffer, partial);
-  }
-
-  @Override
-  public JsonObject toJSon() {
-    return super.createJsonBuilder().build();
   }
 
 }

@@ -22,11 +22,8 @@ package nl.sidnlabs.dnslib.message.records.dnssec;
 
 import java.security.PublicKey;
 
+import org.apache.commons.codec.CodecPolicy;
 import org.apache.commons.codec.binary.Base64;
-
-import jakarta.json.Json;
-import jakarta.json.JsonObject;
-import jakarta.json.JsonObjectBuilder;
 import lombok.Getter;
 import lombok.Setter;
 import nl.sidnlabs.dnslib.message.records.AbstractResourceRecord;
@@ -117,22 +114,14 @@ public class DNSKEYResourceRecord extends AbstractResourceRecord {
 
   @Override
   public String toZone(int maxLength) {
-    return super.toZone(maxLength) + " " + (int) flags + " " + protocol + " " + algorithm.getValue()
-        + "(\n\t\t\t\t\t\t" + new Base64(36, "\n\t\t\t\t\t\t".getBytes()).encodeAsString(keydata)
-        + " )";
-  }
+    Base64 base64 = Base64.builder()
+      .setDecodingPolicy(CodecPolicy.LENIENT) 
+      .setLineLength(0)                         
+      .setUrlSafe(false)                         
+      .get();
 
-  @Override
-  public JsonObject toJSon() {
-    JsonObjectBuilder builder = super.createJsonBuilder();
-    return builder
-        .add("rdata", Json.createObjectBuilder().add("flags", (int) flags))
-        .add("protocol", protocol)
-        .add("algorithm", algorithm.name())
-        .add("zone-key", isZoneKey)
-        .add("sep-key", isSepKey)
-        .add("keytag", keytag)
-        .build();
+    return super.toZone(maxLength) + " " + (int) flags + " " + protocol + " " + algorithm.getValue()
+        + "(\n\t\t\t\t\t\t" + base64.encode(keydata) + " )";
   }
 
 }

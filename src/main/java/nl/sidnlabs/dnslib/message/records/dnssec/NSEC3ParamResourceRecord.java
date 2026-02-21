@@ -21,9 +21,6 @@ package nl.sidnlabs.dnslib.message.records.dnssec;
 
 import org.apache.commons.codec.binary.Hex;
 
-import jakarta.json.Json;
-import jakarta.json.JsonObject;
-import jakarta.json.JsonObjectBuilder;
 import lombok.Getter;
 import lombok.Setter;
 import nl.sidnlabs.dnslib.message.records.AbstractResourceRecord;
@@ -111,22 +108,5 @@ public class NSEC3ParamResourceRecord extends AbstractResourceRecord {
 
     return b.toString();
   }
-
-  @Override
-  public JsonObject toJSon() {
-    JsonObjectBuilder builder = super.createJsonBuilder();
-    return builder
-        .add("rdata",
-            Json
-                .createObjectBuilder()
-                .add("hash-algorithm", hashAlgorithm.name())
-                .add("flags", flags)
-                .add("optout", optout)
-                .add("iterations", (int) iterations)
-                .add("salt-length", saltLength)
-                .add("salt", Hex.encodeHexString(salt)))
-        .build();
-  }
-
 
 }

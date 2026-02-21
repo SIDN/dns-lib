@@ -19,9 +19,6 @@
  */
 package nl.sidnlabs.dnslib.message.records;
 
-import jakarta.json.Json;
-import jakarta.json.JsonObject;
-import jakarta.json.JsonObjectBuilder;
 import lombok.Getter;
 import lombok.Setter;
 import nl.sidnlabs.dnslib.message.util.DNSStringUtil;
@@ -57,12 +54,6 @@ public class CNAMEResourceRecord extends AbstractResourceRecord {
   @Override
   public String toZone(int maxLength) {
     return super.toZone(maxLength) + "\t" + cname;
-  }
-
-  @Override
-  public JsonObject toJSon() {
-    JsonObjectBuilder builder = super.createJsonBuilder();
-    return builder.add("rdata", Json.createObjectBuilder().add("cname", cname)).build();
   }
 
   @Override

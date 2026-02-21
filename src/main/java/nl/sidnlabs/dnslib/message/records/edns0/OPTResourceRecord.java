@@ -22,9 +22,6 @@ package nl.sidnlabs.dnslib.message.records.edns0;
 import java.util.ArrayList;
 import java.util.List;
 
-import jakarta.json.Json;
-import jakarta.json.JsonObject;
-import jakarta.json.JsonObjectBuilder;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.log4j.Log4j2;
@@ -183,20 +180,6 @@ public class OPTResourceRecord extends AbstractResourceRecord {
 
     // write the length of the rdata section
     buffer.writeChar(rdLeng);
-  }
-
-
-  @Override
-  public JsonObject toJSon() {
-    JsonObjectBuilder builder = Json.createObjectBuilder();
-    return builder
-        .add("name", name)
-        .add("type", type.name())
-        .add("payload-size", (int) udpPlayloadSize)
-        .add("rcode", rcode)
-        .add("flags", (int) flags)
-        .add("rdata", Json.createObjectBuilder().add("do", dnssecDo))
-        .build();
   }
 
   @Override

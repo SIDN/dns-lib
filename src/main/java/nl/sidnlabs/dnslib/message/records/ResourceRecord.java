@@ -19,7 +19,6 @@
  */
 package nl.sidnlabs.dnslib.message.records;
 
-import jakarta.json.JsonObject;
 import nl.sidnlabs.dnslib.message.util.NetworkData;
 import nl.sidnlabs.dnslib.types.ResourceRecordClass;
 import nl.sidnlabs.dnslib.types.ResourceRecordType;
@@ -53,7 +52,5 @@ public interface ResourceRecord {
   void encode(NetworkData buffer);
 
   String toZone(int maxLength);
-
-  JsonObject toJSon();
 
 }

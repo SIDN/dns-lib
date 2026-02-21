@@ -23,9 +23,6 @@ import java.io.Serializable;
 
 import org.apache.commons.lang3.StringUtils;
 
-import jakarta.json.Json;
-import jakarta.json.JsonObject;
-import jakarta.json.JsonObjectBuilder;
 import lombok.Getter;
 import lombok.Setter;
 import nl.sidnlabs.dnslib.message.util.DNSStringUtil;
@@ -101,22 +98,7 @@ public abstract class AbstractResourceRecord implements ResourceRecord, Serializ
     String ownerWithPadding = StringUtils.rightPad(name, paddedSize, " ");
     return ownerWithPadding + "\t" + ttl + "\t" + classz + "\t" + type;
   }
-
-  public JsonObjectBuilder createJsonBuilder() {
-    return Json
-        .createObjectBuilder()
-        .add("name", name)
-        .add("type", type.name())
-        .add("class", classz.name())
-        .add("ttl", ttl)
-        .add("rdLength", (int) rdLength);
-  }
-
-  public JsonObject toJSon() {
-    JsonObjectBuilder builder = createJsonBuilder();
-    return builder.add("rdata", Json.createObjectBuilder().add("dummy", "toddo")).build();
-  }
-
+  
   @Override
   public boolean equals(Object obj) {
     if (this == obj)

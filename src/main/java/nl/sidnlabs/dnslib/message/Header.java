@@ -19,8 +19,6 @@
  */
 package nl.sidnlabs.dnslib.message;
 
-import jakarta.json.Json;
-import jakarta.json.JsonObject;
 import lombok.Getter;
 import lombok.Setter;
 import nl.sidnlabs.dnslib.message.util.NetworkData;
@@ -333,28 +331,4 @@ public class Header {
         + cd + ", rcode:" + rcode + ", qdCount:" + (int) qdCount + ", anCount:" + (int) anCount
         + ", nsCount:" + (int) nsCount + ", arCount:" + (int) arCount;
   }
-
-  public JsonObject toJSon() {
-    return Json
-        .createObjectBuilder()
-        .add("id", id)
-        .add("qr", qr.getValue())
-        .add("opcode", opCode.getValue())
-        .add("flags",
-            Json
-                .createObjectBuilder()
-                .add("aa", aa)
-                .add("tc", tc)
-                .add("rd", rd)
-                .add("ra", ra)
-                .add("ad", ad)
-                .add("cd", cd))
-        .add("rcode", rcode.name())
-        .add("qdCount", qdCount)
-        .add("anCount", anCount)
-        .add("nsCount", nsCount)
-        .add("arCount", arCount)
-        .build();
-  }
-
 }

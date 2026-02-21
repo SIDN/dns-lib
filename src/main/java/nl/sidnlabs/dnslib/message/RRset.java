@@ -23,9 +23,6 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import jakarta.json.Json;
-import jakarta.json.JsonArray;
-import jakarta.json.JsonArrayBuilder;
 import lombok.Getter;
 import lombok.Setter;
 import nl.sidnlabs.dnslib.message.records.ResourceRecord;
@@ -112,16 +109,6 @@ public class RRset implements Serializable {
     }
 
     return b.toString();
-  }
-
-  public JsonArray toJSon() {
-    JsonArrayBuilder builder = Json.createArrayBuilder();
-
-    for (ResourceRecord rr : data) {
-      builder.add(rr.toJSon());
-    }
-
-    return builder.build();
   }
 
 }

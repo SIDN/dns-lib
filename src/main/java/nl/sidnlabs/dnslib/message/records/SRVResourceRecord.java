@@ -19,9 +19,6 @@
  */
 package nl.sidnlabs.dnslib.message.records;
 
-import jakarta.json.Json;
-import jakarta.json.JsonObject;
-import jakarta.json.JsonObjectBuilder;
 import lombok.Getter;
 import lombok.Setter;
 import nl.sidnlabs.dnslib.message.util.DNSStringUtil;
@@ -73,18 +70,6 @@ public class SRVResourceRecord extends AbstractResourceRecord {
   public String toZone(int maxLength) {
     return super.toZone(maxLength) + "\t" + (int) priority + " " + (int) weight + " " + (int) port
         + " " + target;
-  }
-
-
-  @Override
-  public JsonObject toJSon() {
-    JsonObjectBuilder builder = super.createJsonBuilder();
-    return builder
-        .add("rdata", Json.createObjectBuilder().add("priority", (int) priority))
-        .add("weight", (int) weight)
-        .add("port", (int) port)
-        .add("target", target)
-        .build();
   }
 
 }

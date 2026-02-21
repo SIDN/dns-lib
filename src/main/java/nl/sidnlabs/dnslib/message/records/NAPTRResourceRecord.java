@@ -19,9 +19,6 @@
  */
 package nl.sidnlabs.dnslib.message.records;
 
-import jakarta.json.Json;
-import jakarta.json.JsonObject;
-import jakarta.json.JsonObjectBuilder;
 import lombok.Getter;
 import lombok.Setter;
 import nl.sidnlabs.dnslib.message.util.DNSStringUtil;
@@ -90,24 +87,6 @@ public class NAPTRResourceRecord extends AbstractResourceRecord {
   public String toZone(int maxLength) {
     return super.toZone(maxLength) + "\t" + (int) order + " " + preference + " \"" + flags + "\" "
         + "\"" + services + "\" " + "\"" + regexp + "\" " + replacement;
-  }
-
-
-  @Override
-  public JsonObject toJSon() {
-    JsonObjectBuilder builder = super.createJsonBuilder();
-    return builder
-        .add("rdata",
-            Json
-                .createObjectBuilder()
-                .add("order", (int) order)
-                .add("preference", (int) preference)
-                .add("flags", flags)
-                .add("services", services)
-                .add("regexp", regexp)
-                .add("replacement", replacement)
-                .add("length", length))
-        .build();
   }
 
 }

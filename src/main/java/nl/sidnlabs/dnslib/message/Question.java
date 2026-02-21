@@ -19,8 +19,6 @@
  */
 package nl.sidnlabs.dnslib.message;
 
-import jakarta.json.Json;
-import jakarta.json.JsonObject;
 import lombok.Getter;
 import lombok.Setter;
 import nl.sidnlabs.dnslib.message.util.DNSStringUtil;
@@ -56,15 +54,6 @@ public class Question {
     qClassValue = buffer.readUnsignedChar();
     setQClass(ResourceRecordClass.fromValue(qClassValue));
 
-  }
-
-  public JsonObject toJSon() {
-    return Json
-        .createObjectBuilder()
-        .add("qName", qName)
-        .add("qType", qType != null ? qType.name() : "")
-        .add("qClass", qClass != null ? qClass.name() : "")
-        .build();
   }
 
   @Override

@@ -25,10 +25,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import jakarta.json.Json;
-import jakarta.json.JsonArrayBuilder;
-import jakarta.json.JsonObject;
-import jakarta.json.JsonObjectBuilder;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.log4j.Log4j2;
@@ -74,7 +70,9 @@ public class Message {
     final int hashCode;
 
     RRsetKey(String name, ResourceRecordClass classz, ResourceRecordType type) {
-      this.name = name.toLowerCase(); // case-insensitive
+      // DNS names from DNSStringUtil.readNameUsingBuffer are already lowercased
+      // by toLowerCaseAsciiInPlace, so avoid the redundant allocation here.
+      this.name = name;
       this.classz = classz;
       this.type = type;
       // Pre-compute hash
@@ -433,45 +431,6 @@ public class Message {
     }
 
     return builder.toString();
-  }
-
-  public JsonObject toJson() {
-    JsonObjectBuilder builder = Json.createObjectBuilder();
-    builder.add("header", header.toJSon());
-
-    JsonArrayBuilder questionsBuilder = Json.createArrayBuilder();
-    if (questions != null) {
-      for (Question question : questions) {
-        questionsBuilder.add(question.toJSon());
-      }
-    }
-    builder.add("question", questionsBuilder.build());
-
-    JsonArrayBuilder rrBuilder = Json.createArrayBuilder();
-    if (answer != null) {
-      for (RRset rrset : answer) {
-        rrBuilder.add(rrset.toJSon());
-      }
-    }
-    builder.add("answer", rrBuilder.build());
-
-    rrBuilder = Json.createArrayBuilder();
-    if (authority != null) {
-      for (RRset rrset : authority) {
-        rrBuilder.add(rrset.toJSon());
-      }
-    }
-    builder.add("authority", rrBuilder.build());
-
-    rrBuilder = Json.createArrayBuilder();
-    if (additional != null) {
-      for (RRset rrset : additional) {
-        rrBuilder.add(rrset.toJSon());
-      }
-    }
-    builder.add("additional", rrBuilder.build());
-
-    return builder.build();
   }
 
   public int maxLength() {

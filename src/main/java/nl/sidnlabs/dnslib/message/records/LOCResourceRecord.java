@@ -22,9 +22,6 @@ package nl.sidnlabs.dnslib.message.records;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 
-import jakarta.json.Json;
-import jakarta.json.JsonObject;
-import jakarta.json.JsonObjectBuilder;
 import lombok.Getter;
 import lombok.Setter;
 import nl.sidnlabs.dnslib.exception.DnsDecodeException;
@@ -168,24 +165,6 @@ public class LOCResourceRecord extends AbstractResourceRecord {
     return sb.toString();
 
   }
-
-  @Override
-  public JsonObject toJSon() {
-    JsonObjectBuilder builder = super.createJsonBuilder();
-    return builder
-        .add("rdata",
-            Json
-                .createObjectBuilder()
-                .add("version", (int) version)
-                .add("size", (int) size)
-                .add("hor_pre", (int) horizontalPrecision)
-                .add("vert_pre", (int) verticalPrecision)
-                .add("lat", latitude)
-                .add("long", longitude)
-                .add("alt", altitude))
-        .build();
-  }
-
 
   private String positionToString(long value, char pos, char neg) {
     StringBuilder sb = new StringBuilder();

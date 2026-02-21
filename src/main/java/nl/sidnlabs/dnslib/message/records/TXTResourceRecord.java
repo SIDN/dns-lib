@@ -19,9 +19,6 @@
  */
 package nl.sidnlabs.dnslib.message.records;
 
-import jakarta.json.Json;
-import jakarta.json.JsonObject;
-import jakarta.json.JsonObjectBuilder;
 import java.nio.charset.StandardCharsets;
 import lombok.Getter;
 import lombok.Setter;
@@ -74,12 +71,6 @@ public class TXTResourceRecord extends AbstractResourceRecord {
   @Override
   public String toZone(int maxLength) {
     return super.toZone(maxLength) + "\t" + value;
-  }
-
-  @Override
-  public JsonObject toJSon() {
-    JsonObjectBuilder builder = super.createJsonBuilder();
-    return builder.add("rdata", Json.createObjectBuilder().add("txt-data", value)).build();
   }
 
   @Override

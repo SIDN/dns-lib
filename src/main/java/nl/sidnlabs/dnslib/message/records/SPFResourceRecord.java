@@ -19,9 +19,6 @@
  */
 package nl.sidnlabs.dnslib.message.records;
 
-import jakarta.json.Json;
-import jakarta.json.JsonObject;
-import jakarta.json.JsonObjectBuilder;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -31,13 +28,4 @@ public class SPFResourceRecord extends TXTResourceRecord {
 
   private static final long serialVersionUID = 1L;
 
-  /*
-   * https://tools.ietf.org/html/rfc4408#section-4.5
-   */
-
-  @Override
-  public JsonObject toJSon() {
-    JsonObjectBuilder builder = super.createJsonBuilder();
-    return builder.add("rdata", Json.createObjectBuilder().add("spf-data", value)).build();
-  }
 }

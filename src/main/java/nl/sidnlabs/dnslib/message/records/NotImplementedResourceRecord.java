@@ -22,9 +22,6 @@ package nl.sidnlabs.dnslib.message.records;
 import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.lang3.StringUtils;
 
-import jakarta.json.Json;
-import jakarta.json.JsonObject;
-import jakarta.json.JsonObjectBuilder;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.log4j.Log4j2;
@@ -91,34 +88,5 @@ public class NotImplementedResourceRecord extends AbstractResourceRecord {
 
     return b.toString();
   }
-
-  @Override
-  public JsonObject toJSon() {
-    String actualClass = null;
-    String actualType = null;
-    if (classz == null) {
-      actualClass = "CLASS" + (int) rawClassz;
-    } else {
-      actualClass = classz.name();
-    }
-
-    if (type == null) {
-      actualType = "TYPE" + (int) rawType;
-    } else {
-      actualType = "" + type;
-    }
-
-    JsonObjectBuilder builder = Json.createObjectBuilder();
-    return builder
-        .add("rdata",
-            Json
-                .createObjectBuilder()
-                .add("class", actualClass)
-                .add("type", actualType)
-                .add("rdlength", (int) rdLength)
-                .add("rdata", Hex.encodeHexString(rdata)))
-        .build();
-  }
-
 
 }

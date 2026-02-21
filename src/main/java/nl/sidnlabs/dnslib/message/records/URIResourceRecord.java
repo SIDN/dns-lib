@@ -21,9 +21,6 @@ package nl.sidnlabs.dnslib.message.records;
 
 import java.nio.charset.StandardCharsets;
 
-import jakarta.json.Json;
-import jakarta.json.JsonObject;
-import jakarta.json.JsonObjectBuilder;
 import lombok.Getter;
 import lombok.Setter;
 import nl.sidnlabs.dnslib.message.util.NetworkData;
@@ -64,19 +61,6 @@ public class URIResourceRecord extends AbstractResourceRecord {
   @Override
   public String toZone(int maxLength) {
     return super.toZone(maxLength) + "\t" + priority + " " + weight + " " + uri;
-  }
-
-  @Override
-  public JsonObject toJSon() {
-    JsonObjectBuilder builder = super.createJsonBuilder();
-    return builder
-        .add("rdata",
-            Json
-                .createObjectBuilder()
-                .add("priority", priority)
-                .add("weight", weight)
-                .add("uri", uri))
-        .build();
   }
 
   @Override

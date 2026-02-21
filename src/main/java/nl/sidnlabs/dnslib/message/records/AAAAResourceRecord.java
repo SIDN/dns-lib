@@ -23,9 +23,6 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 import com.google.common.net.InetAddresses;
 
-import jakarta.json.Json;
-import jakarta.json.JsonObject;
-import jakarta.json.JsonObjectBuilder;
 import lombok.Getter;
 import lombok.Setter;
 import nl.sidnlabs.dnslib.exception.DnsDecodeException;
@@ -79,12 +76,6 @@ public class AAAAResourceRecord extends AbstractResourceRecord {
   @Override
   public String toZone(int maxLength) {
     return super.toZone(maxLength) + "\t" + address;
-  }
-
-  @Override
-  public JsonObject toJSon() {
-    JsonObjectBuilder builder = super.createJsonBuilder();
-    return builder.add("rdata", Json.createObjectBuilder().add("address", address)).build();
   }
 
   @Override

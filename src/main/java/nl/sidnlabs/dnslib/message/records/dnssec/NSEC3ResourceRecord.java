@@ -25,10 +25,6 @@ import java.util.List;
 import org.apache.commons.codec.binary.Base32;
 import org.apache.commons.codec.binary.Hex;
 
-import jakarta.json.Json;
-import jakarta.json.JsonArrayBuilder;
-import jakarta.json.JsonObject;
-import jakarta.json.JsonObjectBuilder;
 import lombok.Getter;
 import lombok.Setter;
 import nl.sidnlabs.dnslib.message.records.AbstractResourceRecord;
@@ -97,7 +93,8 @@ public class NSEC3ResourceRecord extends AbstractResourceRecord {
         buffer.readBytes(hash);
       }
 
-      Base32 b32 = new Base32(true);
+      Base32 b32 = Base32.builder().get();
+
       nexthashedownername = b32.encodeAsString(hash);
 
       int octetAvailable = rdLength - (RDATA_FIXED_FIELDS_LENGTH + saltLength + hashLength);
@@ -112,29 +109,6 @@ public class NSEC3ResourceRecord extends AbstractResourceRecord {
     buffer.writeChar(rdLength);
 
     buffer.writeBytes(rdata);
-  }
-
-
-  @Override
-  public JsonObject toJSon() {
-    JsonObjectBuilder builder = super.createJsonBuilder();
-    builder
-        .add("rdata",
-            Json
-                .createObjectBuilder()
-                .add("hash-algorithm", hashAlgorithm.name())
-                .add("flags", flags)
-                .add("iterations", (int) iterations)
-                .add("salt-length", saltLength)
-                .add("salt", Hex.encodeHexString(salt))
-                .add("hash-length", (int) hashLength)
-                .add("nxt-own-name", nexthashedownername));
-
-    JsonArrayBuilder typeBuilder = Json.createArrayBuilder();
-    for (TypeMap type : types) {
-      typeBuilder.add(type.getType().name());
-    }
-    return builder.add("types", typeBuilder.build()).build();
   }
 
   @Override

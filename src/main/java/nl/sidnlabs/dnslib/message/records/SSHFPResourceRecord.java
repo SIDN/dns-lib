@@ -19,11 +19,6 @@
  */
 package nl.sidnlabs.dnslib.message.records;
 
-import org.apache.commons.codec.binary.Hex;
-
-import jakarta.json.Json;
-import jakarta.json.JsonObject;
-import jakarta.json.JsonObjectBuilder;
 import lombok.Getter;
 import lombok.Setter;
 import nl.sidnlabs.dnslib.message.util.NetworkData;
@@ -62,19 +57,6 @@ public class SSHFPResourceRecord extends AbstractResourceRecord {
     buffer.writeChar(rdLength);
 
     buffer.writeBytes(rdata);
-  }
-
-  @Override
-  public JsonObject toJSon() {
-    JsonObjectBuilder builder = super.createJsonBuilder();
-    return builder
-        .add("rdata",
-            Json
-                .createObjectBuilder()
-                .add("algorithm", algorithm)
-                .add("fptype", fingerprintType)
-                .add("fingerprint", Hex.encodeHexString(fingerprint)))
-        .build();
   }
 
 }

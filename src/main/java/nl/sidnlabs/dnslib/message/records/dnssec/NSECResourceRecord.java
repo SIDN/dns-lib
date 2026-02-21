@@ -22,10 +22,6 @@ package nl.sidnlabs.dnslib.message.records.dnssec;
 import java.util.ArrayList;
 import java.util.List;
 
-import jakarta.json.Json;
-import jakarta.json.JsonArrayBuilder;
-import jakarta.json.JsonObject;
-import jakarta.json.JsonObjectBuilder;
 import lombok.Getter;
 import lombok.Setter;
 import nl.sidnlabs.dnslib.message.records.AbstractResourceRecord;
@@ -94,17 +90,4 @@ public class NSECResourceRecord extends AbstractResourceRecord {
 
     return b.toString();
   }
-
-  @Override
-  public JsonObject toJSon() {
-    JsonObjectBuilder builder = super.createJsonBuilder();
-    builder.add("rdata", Json.createObjectBuilder().add("next-domainname", nextDomainName));
-
-    JsonArrayBuilder typeBuilder = Json.createArrayBuilder();
-    for (TypeMap type : types) {
-      typeBuilder.add(type.getType().name());
-    }
-    return builder.add("types", typeBuilder.build()).build();
-  }
-
 }

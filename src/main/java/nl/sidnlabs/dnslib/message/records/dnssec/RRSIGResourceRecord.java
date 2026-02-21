@@ -23,11 +23,9 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.TimeZone;
 
+import org.apache.commons.codec.CodecPolicy;
 import org.apache.commons.codec.binary.Base64;
 
-import jakarta.json.Json;
-import jakarta.json.JsonObject;
-import jakarta.json.JsonObjectBuilder;
 import lombok.Getter;
 import lombok.Setter;
 import nl.sidnlabs.dnslib.message.records.AbstractResourceRecord;
@@ -165,36 +163,16 @@ public class RRSIGResourceRecord extends AbstractResourceRecord {
     SimpleDateFormat fmt = new SimpleDateFormat("YYYYMMddHHmmss");
     fmt.setTimeZone(TimeZone.getTimeZone("UTC"));
 
+    Base64 base64 = Base64.builder()
+      .setDecodingPolicy(CodecPolicy.LENIENT) 
+      .setLineLength(0)                         
+      .setUrlSafe(false)                         
+      .get();
+
     return super.toZone(maxLength) + "\t" + typeCovered.name() + " " + algorithm.getValue() + " "
         + labels + " " + originalTtl + " " + fmt.format(exp) + "(\n\t\t\t\t\t" + fmt.format(incep)
         + " " + (int) keytag + " " + signerName + "\n\t\t\t\t\t"
-        + new Base64(36, "\n\t\t\t\t\t".getBytes()).encodeAsString(signature) + " )";
+        + base64.encode(signature) + " )";
   }
 
-
-  @Override
-  public JsonObject toJSon() {
-    Date exp = new Date();
-    exp.setTime((long) (signatureExpiration * 1000));
-
-    Date incep = new Date();
-    incep.setTime((long) (signatureInception * 1000));
-
-    JsonObjectBuilder builder = super.createJsonBuilder();
-    return builder
-        .add("rdata",
-            Json
-                .createObjectBuilder()
-                .add("type-covered", typeCovered.name())
-                .add("algorithm", algorithm.name())
-                .add("labels", labels)
-                .add("original-ttl", originalTtl)
-                .add("sig-exp", DATE_FMT.format(exp))
-                .add("sig-inc", DATE_FMT.format(incep))
-                .add("keytag", (int) keytag)
-                .add("signer-name", signerName)
-                .add("signature",
-                    new Base64(Integer.MAX_VALUE, "".getBytes()).encodeAsString(signature)))
-        .build();
-  }
 }
