@@ -3,7 +3,7 @@
 
 	<groupId>nl.sidnlabs</groupId>
 	<artifactId>dnslib</artifactId>
-	<version>0.2.20-SNAPSHOT</version>
+	<version>0.2.19</version>
 
 	<name>${project.groupId}:${project.artifactId}</name>
 	<description>DNS library</description>
@@ -29,7 +29,7 @@
 		<connection>scm:git:ssh://github.com/SIDN/dns-lib.git</connection>
 		<developerConnection>scm:git:ssh://github.com/SIDN/dns-lib.git</developerConnection>
 		<url>https://github.com/SIDN/dnslib/tree/master/</url>
-		<tag>dnslib-0.2.17</tag>
+		<tag>dnslib-0.2.19</tag>
 	</scm>
 
 	<properties>
@@ -149,6 +149,18 @@
 					</execution>
 				</executions>
 			</plugin>
+
+			<plugin>
+			<groupId>org.sonatype.central</groupId>
+			<artifactId>central-publishing-maven-plugin</artifactId>
+			<version>0.9.0</version>
+			<extensions>true</extensions>
+			<configuration>
+				<publishingServerId>central</publishingServerId>
+			</configuration>
+			</plugin>
+
+		<!--
 			<plugin>
 				<groupId>org.sonatype.plugins</groupId>
 				<artifactId>nexus-staging-maven-plugin</artifactId>
@@ -162,6 +174,7 @@
 					<stagingProgressTimeoutMinutes>10</stagingProgressTimeoutMinutes>
 				</configuration>
 			</plugin>
+		-->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-release-plugin</artifactId>
